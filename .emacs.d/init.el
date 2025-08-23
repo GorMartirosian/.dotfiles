@@ -31,20 +31,20 @@
 (when my/is-windows-system
   (setq find-program "C:/cygwin64/bin/find.exe"))
 
-(defun my/protect-init-file ()
-  "Make `init.el` read-only to prevent accidental edits."
-  (when (my/current-file-init-p)
-    (read-only-mode 1)))
+;; (defun my/protect-init-file ()
+;;   "Make `init.el` read-only to prevent accidental edits."
+;;   (when (my/current-file-init-p)
+;;     (read-only-mode 1)))
 
-(defun my/current-file-init-p ()
-  (and buffer-file-name
-             (string-equal (file-truename buffer-file-name)
-                           (file-truename user-init-file))))
+;; (defun my/current-file-init-p ()
+;;   (and buffer-file-name
+;;              (string-equal (file-truename buffer-file-name)
+;;                            (file-truename user-init-file))))
 
-(defun my/make-current-file-read-only ()
-  (read-only-mode 1))
+;; (defun my/make-current-file-read-only ()
+;;   (read-only-mode 1))
 
-(add-hook 'find-file-hook #'my/make-current-file-read-only)
+;; (add-hook 'find-file-hook #'my/make-current-file-read-only)
 
 (setq inhibit-startup-message t)
 
@@ -154,6 +154,19 @@
 (global-display-line-numbers-mode t)
 
 (setopt org-link-descriptive nil)
+
+(use-package org-roam
+  :config
+  (unless (file-directory-p "~/OrgRoam")
+    (make-directory "~/OrgRoam" t))
+
+  (setq org-roam-directory (file-truename "~/OrgRoam"))
+
+  (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle)
+  (global-set-key (kbd "C-c n f") #'org-roam-node-find)
+  (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
+
+  (org-roam-db-autosync-mode))
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
