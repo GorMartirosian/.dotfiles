@@ -31,21 +31,6 @@
 (when my/is-windows-system
   (setq find-program "C:/cygwin64/bin/find.exe"))
 
-;; (defun my/protect-init-file ()
-;;   "Make `init.el` read-only to prevent accidental edits."
-;;   (when (my/current-file-init-p)
-;;     (read-only-mode 1)))
-
-;; (defun my/current-file-init-p ()
-;;   (and buffer-file-name
-;;              (string-equal (file-truename buffer-file-name)
-;;                            (file-truename user-init-file))))
-
-;; (defun my/make-current-file-read-only ()
-;;   (read-only-mode 1))
-
-;; (add-hook 'find-file-hook #'my/make-current-file-read-only)
-
 (setq inhibit-startup-message t)
 
 (setq initial-frame-alist
@@ -114,9 +99,7 @@
   (load-theme 'doom-challenger-deep t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
-  ;; Enable custom neotree theme (nerd-icons must be installed!)
-  (doom-themes-neotree-config)
-  ;; or for treemacs users
+  ;; for treemacs users
   (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
   (doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
@@ -202,11 +185,11 @@
   :custom
   (marginalia-mode 1))
 
-;; (use-package nerd-icons-completion ;; TODO
-;;   :after (marginalia all-the-icons)
-;;   :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
-;;   :config
-;;   (all-the-icons-completion-mode 1))
+(use-package nerd-icons-completion
+  :after marginalia
+  :config
+  (nerd-icons-completion-mode)
+  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
 (use-package consult
   :after recentf
@@ -430,7 +413,9 @@
 (use-package treemacs-icons-dired
   :hook (dired-mode . treemacs-icons-dired-enable-once))
 
-(use-package treemacs-nerd-icons)
+(use-package treemacs-nerd-icons
+  :config
+  (treemacs-load-theme "nerd-icons"))
 
 ;; Machine specific: do not forget to install the LSP servers.
 (use-package eglot
