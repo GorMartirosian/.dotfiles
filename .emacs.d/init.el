@@ -75,17 +75,30 @@
 
 (setq use-package-always-ensure t)
 
+(defun font-exists-p (font)
+  "Check if font exists"
+  (if (null (x-list-fonts font)) nil t)) 
+
 ;; Font
 ;; Change needed on new machine. Install the necessary fonts.
-(set-face-attribute 'default nil :family "FiraCode Nerd Font Mono" :height 120 :weight 'medium)
+(set-face-attribute 'default nil
+		    :family "AdwaitaMono Nerd Font"
+		    :height 120
+		    :weight 'medium)
 
 (add-hook 'prog-mode-hook
           #'(lambda ()
-	      (set-face-attribute 'font-lock-comment-face nil :family "DejaVuSansM Nerd Font" :slant 'italic :foreground "cyan4")))
+	      (set-face-attribute 'font-lock-comment-face
+				  nil
+				  :family "DejaVuSansM Nerd Font"
+				  :slant 'italic
+				  :foreground "cyan4")))
 
 (add-hook 'help-mode-hook
           #'(lambda ()
-	      (face-remap-add-relative 'default :family "DejaVuSansM Nerd Font" :weight 'bold)))
+	      (face-remap-add-relative 'default
+				       :family "AdwaitaMono Nerd Font"
+				       :weight 'bold)))
 
 ;;Theme
 
