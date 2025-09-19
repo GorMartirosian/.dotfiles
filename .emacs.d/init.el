@@ -331,6 +331,17 @@
   :config
   (global-diff-hl-mode))
 
+(defun my/disable-auto-save-on-makefiles ()
+  (setq-local auto-save-visited-mode nil))
+
+(add-hook 'makefile-mode-hook #'my/disable-auto-save-on-makefiles)
+
+(defun my/disable-auto-save-on-tramp ()
+  (when (file-remote-p default-directory)
+    (setq-local auto-save-visited-mode nil)))
+
+(add-hook 'find-file-hook #'my/disable-auto-save-on-tramp)
+
 (use-package corfu
   :custom
     (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
