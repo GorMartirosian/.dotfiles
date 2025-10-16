@@ -11,17 +11,6 @@
 (setopt auto-save-visited-mode t)
 (setopt auto-save-visited-interval 0.1) 
 
-(use-package emacs
-  :custom
-  (enable-recursive-minibuffers t)
-  (minibuffer-depth-indicate-mode 1)
-
-  (tab-always-indent 'complete)
-  (completion-cycle-threshold 3)
-
-  ;; Only useful commands for current buffer are shown in M-x
-  (read-extended-command-predicate #'command-completion-default-include-p))
-
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (defvar my/is-linux-system (eq system-type 'gnu/linux))
@@ -75,6 +64,17 @@
 
 (setq use-package-always-ensure t)
 
+(use-package emacs
+  :custom
+  (enable-recursive-minibuffers t)
+  (minibuffer-depth-indicate-mode 1)
+
+  (tab-always-indent 'complete)
+  (completion-cycle-threshold 3)
+
+  ;; Only useful commands for current buffer are shown in M-x
+  (read-extended-command-predicate #'command-completion-default-include-p))
+
 (defun font-exists-p (font)
   "Check if font exists"
   (if (null (x-list-fonts font)) nil t)) 
@@ -109,7 +109,7 @@
   :config
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
         doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-challenger-deep t)
+  (load-theme 'doom-molokai t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
   ;; for treemacs users
@@ -310,22 +310,7 @@
 (use-package magit
   :config
   (setq ediff-split-window-function 'split-window-horizontally)
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-  (with-eval-after-load 'ediff
-    (custom-set-faces
-     '(ediff-current-diff-A ((t (:background "#4B1818"))))
-     '(ediff-fine-diff-A    ((t (:background "#6F1313" :weight bold))))
-
-     '(ediff-current-diff-B ((t (:background "#267326")))) 
-     '(ediff-fine-diff-B    ((t (:background "#2E8B2E" :weight bold))))
-
-     '(ediff-current-diff-C ((t (:background "#264F78"))))
-     '(ediff-fine-diff-C    ((t (:background "#3B6EA8" :weight bold))))
-
-     '(ediff-even-diff-A    ((t (:background "#1e1e1e"))))
-     '(ediff-even-diff-B    ((t (:background "#1e1e1e"))))
-     '(ediff-odd-diff-A     ((t (:background "#252526"))))
-     '(ediff-odd-diff-B     ((t (:background "#252526")))))))
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (use-package diff-hl
   :config
