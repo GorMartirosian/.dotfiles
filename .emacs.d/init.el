@@ -219,33 +219,38 @@
   (global-set-key (kbd "C-h k") #'helpful-key)
   (global-set-key (kbd "C-h x") #'helpful-command))
 
+(defun my/evil-scroll-down-and-center ()
+  "Scroll down and center the cursor."
+  (interactive)
+  (evil-scroll-down nil)
+  (recenter))
+
+(defun my/evil-scroll-up-and-center ()
+  "Scroll up and center the cursor."
+  (interactive)
+  (evil-scroll-up nil)
+  (recenter))
 
 (defun my/set-additional-keybindings ()
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-  (defun my/evil-scroll-down-and-center ()
-    "Scroll down and center the cursor."
-    (interactive)
-    (evil-scroll-down nil)
-    (recenter))
-
-  (defun my/evil-scroll-up-and-center ()
-    "Scroll up and center the cursor."
-    (interactive)
-    (evil-scroll-up nil)
-    (recenter))
   
   (define-key evil-normal-state-map (kbd "C-d") #'my/evil-scroll-down-and-center)
   (define-key evil-normal-state-map (kbd "C-u") #'my/evil-scroll-up-and-center)
   
   (with-eval-after-load 'vertico
 
-    (defvar my/extended-minibuffer-keymap
+    (defvar my/listed-entries-minibuffer-keymap
       (let ((map (make-sparse-keymap)))
 	(define-key map (kbd "C-n") #'vertico-next)
 	(define-key map (kbd "C-p") #'vertico-previous)
+	map))
+
+    (defvar my/one-line-minibuffer-keymap
+      (let ((map (make-sparse-keymap)))
+	(define-key map (kbd "C-n") #'next-line-or-history-element)
+	(define-key map (kbd "C-p") #'previous-line-or-history-element)
 	map))
 
     (defvar my/extended-global-keymap
@@ -253,12 +258,19 @@
 	(define-key map (kbd "C-F") #'consult-grep)
 	map))
 
-    (add-to-list 'emulation-mode-map-alists `((my/is-minibuffer-extension-map-enabled . ,my/extended-minibuffer-keymap)))
+    (add-to-list
+     'emulation-mode-map-alists
+     `((my/is-listed-entries-minibuffer-keymap-enabled . ,my/listed-entries-minibuffer-keymap)))
+    (add-to-list
+     'emulation-mode-map-alists
+     `((my/is-one-line-minibuffer-keymap-enabled . ,my/one-line-minibuffer-keymap)))
     (add-to-list 'emulation-mode-map-alists `((t . ,my/extended-global-keymap)))
 
     (add-hook 'minibuffer-setup-hook
 	      #'(lambda ()
-		  (setq-local my/is-minibuffer-extension-map-enabled t))))
+		  (if (eq this-command 'eval-expression)
+		      (setq-local my/is-one-line-minibuffer-keymap-enabled t)
+		    (setq-local my/is-listed-entries-minibuffer-keymap-enabled t)))))
 
   (define-key evil-insert-state-map (kbd "C-w") 'evil-window-map))
 
@@ -316,14 +328,15 @@
   :config
   (global-diff-hl-mode))
 
-(defun my/disable-auto-save-on-makefiles ()
+(defun my/disable-auto-save ()
   (setq-local auto-save-visited-mode nil))
 
-(add-hook 'makefile-mode-hook #'my/disable-auto-save-on-makefiles)
+(add-hook 'makefile-mode-hook #'my/disable-auto-save)
+(add-hook 'vlf-mode-hook #'my/disable-auto-save)
 
 (defun my/disable-auto-save-on-tramp ()
   (when (file-remote-p default-directory)
-    (setq-local auto-save-visited-mode nil)))
+    (my/disable-auto-save)))
 
 (add-hook 'find-file-hook #'my/disable-auto-save-on-tramp)
 
