@@ -92,7 +92,9 @@
 				  nil
 				  :family "DejaVuSansM Nerd Font"
 				  :slant 'italic
-				  :foreground "cyan4")))
+				  :foreground "cyan4")
+	      (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
+	      (set-face-attribute 'font-lock-type-face nil :weight 'bold)))
 
 (add-hook 'help-mode-hook
           #'(lambda ()
