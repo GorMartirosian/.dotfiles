@@ -167,12 +167,12 @@
   (org-roam-db-autosync-mode))
 
 ;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-                term-mode-hook
-                shell-mode-hook
-		treemacs-mode-hook
-                eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+(dolist (mode-hook '(org-mode-hook
+                     term-mode-hook
+                     shell-mode-hook
+		     treemacs-mode-hook
+                     eshell-mode-hook))
+  (add-hook mode-hook #'(lambda () (display-line-numbers-mode 0))))
 
 (use-package vertico
   :custom
@@ -441,13 +441,16 @@
   :config
   (treemacs-load-theme "nerd-icons"))
 
+;; LSP and treesitter setup for C/C++, Python, JS, PHP
+
 ;; Machine specific: do not forget to install the LSP servers.
 (use-package eglot
   :after (clojure-mode)
   :init
   (setopt eglot-autoshutdown t)
   :config
-  (add-hook 'clojure-mode-hook 'eglot-ensure)
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'c++-mode-hook 'eglot-ensure)
-  (add-hook 'python-mode-hook 'eglot-ensure))
+  (dolist (mode-hook '(clojure-mode-hook
+		       c-mode-hook
+		       c++-mode-hook
+		       python-mode-hook))
+    (add-hook mode-hook #'eglot-ensure)))
