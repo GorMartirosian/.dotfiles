@@ -240,6 +240,11 @@
   
   (define-key evil-normal-state-map (kbd "C-d") #'my/evil-scroll-down-and-center)
   (define-key evil-normal-state-map (kbd "C-u") #'my/evil-scroll-up-and-center)
+
+  (define-key evil-insert-state-map (kbd "C-w") 'evil-window-map)
+
+  (keymap-set evil-insert-state-map "C-g" 'evil-normal-state)
+  (keymap-set evil-motion-state-map "/" 'consult-line)
   
   (with-eval-after-load 'vertico
 
@@ -257,7 +262,9 @@
 
     (defvar my/extended-global-keymap
       (let ((map (make-sparse-keymap)))
-	(define-key map (kbd "C-F") #'consult-grep)
+	(define-key map (kbd "C-S-f") #'consult-grep)
+	(define-key map (kbd "C-f") #'consult-line)
+	(define-key map (kbd "C-S-p") #'consult-find)
 	map))
 
     (add-to-list
@@ -272,9 +279,7 @@
 	      #'(lambda ()
 		  (if (eq this-command 'eval-expression)
 		      (setq-local my/is-one-line-minibuffer-keymap-enabled t)
-		    (setq-local my/is-listed-entries-minibuffer-keymap-enabled t)))))
-
-  (define-key evil-insert-state-map (kbd "C-w") 'evil-window-map))
+		    (setq-local my/is-listed-entries-minibuffer-keymap-enabled t))))))
 
 (use-package evil
   :init
@@ -284,7 +289,6 @@
   (setq evil-want-minibuffer t)
   :config
   (evil-mode 1)
-  (keymap-set evil-insert-state-map "C-g" 'evil-normal-state)
 
   (advice-add 'evil-search-next :after
               #'(lambda (&rest x) (evil-scroll-line-to-center (line-number-at-pos))))
@@ -361,7 +365,7 @@
 (use-package evil-nerd-commenter
   :bind ("C-/" . evilnc-comment-or-uncomment-lines))
 
-(defun my/set-lisp-repl-mode-keybindings ()
+(defun my/set-sly-repl-mode-keybindings ()
   (evil-define-key 'normal sly-mrepl-mode-map
     (kbd "C-n") 'sly-mrepl-next-input-or-button
     (kbd "C-p") 'sly-mrepl-previous-input-or-button)
@@ -374,7 +378,7 @@
   :init
   (setq inferior-lisp-program "sbcl")
   :config
-  (my/set-lisp-repl-mode-keybindings))
+  (my/set-sly-repl-mode-keybindings))
 
 (use-package clojure-mode)
 
