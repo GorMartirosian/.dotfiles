@@ -412,7 +412,9 @@
   :config
   (treemacs-load-theme "nerd-icons"))
 
-;; LSP and treesitter setup for C/C++, Python, JS, PHP
+(use-package treesit-auto
+  :config
+  (global-treesit-auto-mode))
 
 ;; Machine specific: do not forget to install the LSP servers.
 (use-package eglot
@@ -422,6 +424,7 @@
   :config
   (dolist (mode-hook '(clojure-mode-hook
 		       c-mode-hook
+		       c-ts-mode-hook
 		       c++-mode-hook
 		       python-mode-hook))
     (add-hook mode-hook #'eglot-ensure)))
