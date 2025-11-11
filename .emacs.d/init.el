@@ -9,7 +9,7 @@
 
 (setopt auto-save-interval 20)
 (setopt auto-save-visited-mode t)
-(setopt auto-save-visited-interval 0.1) 
+(setopt auto-save-visited-interval 2) 
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
@@ -103,10 +103,6 @@
 				       :weight 'bold)))
 
 ;;Theme
-
-;; (use-package modus-themes)
-;; (load-theme 'modus-vivendi-deuteranopia :no-confirm)
-
 (use-package doom-themes
   :config
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -165,14 +161,6 @@
   (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
 
   (org-roam-db-autosync-mode))
-
-;; Disable line numbers for some modes
-(dolist (mode-hook '(org-mode-hook
-                     term-mode-hook
-                     shell-mode-hook
-		     treemacs-mode-hook
-                     eshell-mode-hook))
-  (add-hook mode-hook #'(lambda () (display-line-numbers-mode 0))))
 
 (use-package vertico
   :custom
@@ -244,7 +232,6 @@
   (define-key evil-insert-state-map (kbd "C-w") 'evil-window-map)
 
   (keymap-set evil-insert-state-map "C-g" 'evil-normal-state)
-  (keymap-set evil-motion-state-map "/" 'consult-line)
   
   (with-eval-after-load 'vertico
 
@@ -304,26 +291,6 @@
   (evil-collection-init))
 
 (use-package project)
-
-(defcustom project-root-markers
-  '("package.lisp" "project.clj" ".git" "deps.edn" "shadow-cljs.edn")
-  "Files or directories that indicate the root of a project."
-  :type '(repeat string)
-  :group 'project)
-
-(defun project-root-p (path)
-  "Check if the current PATH has any of the project root markers."
-  (catch 'found
-    (dolist (marker project-root-markers)
-      (when (file-exists-p (concat path marker))
-        (throw 'found marker)))))
-
-(defun project-find-root (path)
-  "Search up the PATH for `project-root-markers'."
-  (when-let ((root (locate-dominating-file path #'project-root-p))) ; goes up the path directory
-    (cons 'transient (expand-file-name root))))
-
-(add-to-list 'project-find-functions #'project-find-root)
 
 (use-package magit
   :config
