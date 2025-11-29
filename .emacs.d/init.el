@@ -92,7 +92,8 @@
 				  :slant 'italic
 				  :foreground "cyan4")
 	      (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
-	      (set-face-attribute 'font-lock-type-face nil :weight 'bold)))
+	      (set-face-attribute 'font-lock-type-face nil :weight 'bold)
+	      (hs-minor-mode 1)))
 
 (add-hook 'help-mode-hook
           #'(lambda ()
