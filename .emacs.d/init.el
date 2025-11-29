@@ -32,8 +32,6 @@
 (set-fringe-mode '(5 . 5))  ; Give some breathing room
 (menu-bar-mode -1)          ; Disable the menu bar
 
-;;OS specific
-;;Change needed on new machine.
 (setq delete-by-moving-to-trash t)
 (cond
  (my/is-macos-system
@@ -116,7 +114,6 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-;;Change needed on new machine.
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 10)))
@@ -146,8 +143,6 @@
 (column-number-mode)
 (setq-default display-line-numbers-type 'relative)
 (global-display-line-numbers-mode t)
-
-(setopt org-link-descriptive nil)
 
 (use-package org-roam
   :config
@@ -412,6 +407,7 @@
   :config
   (treemacs-load-theme "nerd-icons"))
 
+;; Install grammars using treesit-auto-install-all
 (use-package treesit-auto
   :config
   (global-treesit-auto-mode))
@@ -426,5 +422,6 @@
 		       c-mode-hook
 		       c-ts-mode-hook
 		       c++-mode-hook
-		       python-mode-hook))
+		       python-ts-mode-hook
+		       js-ts-mode-hook))
     (add-hook mode-hook #'eglot-ensure)))
