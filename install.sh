@@ -26,9 +26,9 @@ move_identical_files_and_dirs_to_backup_dir() {
 	local file_or_dir_name=$(basename "$item")
 
 	if [[ -e "$HOME/$file_or_dir_name" ]]; then
-    		if ! should_skip_this_file "$file_or_dir_name"; then
-        		mv "$HOME/$file_or_dir_name" "$backup_directory"
-    		fi
+    	    if ! should_skip_this_file "$file_or_dir_name"; then
+        	mv "$HOME/$file_or_dir_name" "$backup_directory"
+    	    fi
 	fi
 
     done
