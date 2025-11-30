@@ -102,6 +102,7 @@
 				       :weight 'bold)))
 
 ;;Theme
+;; Install icons using nerd-icons-install-fonts
 (use-package doom-themes
   :config
   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
