@@ -2,7 +2,7 @@
 
 backup_directory="$HOME/.dotfiles.backup"
 dotfiles_directory="$HOME/.dotfiles"
-files_to_skip=("install.sh" ".git")
+files_and_dirs_to_skip=("install.sh" ".git" ".local")
 
 create_backup_dir() {
     mkdir -p "$backup_directory"
@@ -11,7 +11,7 @@ create_backup_dir() {
 should_skip_this_file() {
     local name="$1"
 
-    for skip in "${files_to_skip[@]}"; do
+    for skip in "${files_and_dirs_to_skip[@]}"; do
         if [[ "$name" == "$skip" ]]; then
             return 0    # yes
         fi
@@ -54,15 +54,20 @@ create_symlinks_to_dotfiles() {
     shopt -u nullglob dotglob
 }
 
-if [[ ! -d "$dotfiles_directory" ]]; then
-    echo "Error: $dotfiles_directory does not exist."
-    exit 1
-fi
-
 if [ ! -d "$HOME/.local/bin" ]; then
     mkdir "$HOME/.local/bin"
     echo "Created $HOME/.local/bin"
 fi
+
+shopt -s nullglob
+dotfiles_local_bins=("$dotfiles_directory/.local/bin/"*)
+shopt -u nullglob
+
+if ((${#dotfiles_local_bins[@]})); then
+    mv "${dotfiles_local_bins[@]}" "$HOME/.local/bin"
+fi
+
+rm -rf "$dotfiles_directory/.local"
 
 read -r -p "Do you want to make a backup directory for \
 existing config files (~/.dotfiles.backup)? (yes/no/exit):" answer
