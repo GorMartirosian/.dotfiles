@@ -1,7 +1,0 @@
-#!/bin/bash
-
-PORT_TO_LISTEN=55555
-REWRITE="/^http:/https:"
-
-mitmproxy -p "$PORT_TO_LISTEN" -M "$REWRITE"
-

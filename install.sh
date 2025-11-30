@@ -2,7 +2,7 @@
 
 backup_directory="$HOME/.dotfiles.backup"
 dotfiles_directory="$HOME/.dotfiles"
-files_and_dirs_to_skip=("install.sh" ".git" ".local")
+files_and_dirs_to_skip=("install.sh" ".git")
 
 create_backup_dir() {
     mkdir -p "$backup_directory"
@@ -20,7 +20,7 @@ should_skip_this_file() {
     return 1    # no
 }
 
-move_identical_files_or_dirs_to_backup_dir() {
+move_identical_files_and_dirs_to_backup_dir() {
     shopt -s nullglob dotglob
     for item in "$dotfiles_directory/"*; do
 	local file_or_dir_name=$(basename "$item")
@@ -54,28 +54,13 @@ create_symlinks_to_dotfiles() {
     shopt -u nullglob dotglob
 }
 
-if [ ! -d "$HOME/.local/bin" ]; then
-    mkdir "$HOME/.local/bin"
-    echo "Created $HOME/.local/bin"
-fi
-
-shopt -s nullglob
-dotfiles_local_bins=("$dotfiles_directory/.local/bin/"*)
-shopt -u nullglob
-
-if ((${#dotfiles_local_bins[@]})); then
-    mv "${dotfiles_local_bins[@]}" "$HOME/.local/bin"
-fi
-
-rm -rf "$dotfiles_directory/.local"
-
 read -r -p "Do you want to make a backup directory for \
 existing config files (~/.dotfiles.backup)? (yes/no/exit):" answer
 
 if [[ "$answer" == "y" || "$answer" == "yes" ]]; then
     create_backup_dir
     echo "Created backup directory $backup_directory"
-    move_identical_files_or_dirs_to_backup_dir
+    move_identical_files_and_dirs_to_backup_dir
     echo "Moved identical files/directories of $HOME/.dotfiles \
     	 from $HOME to $backup_directory"
     create_symlinks_to_dotfiles
