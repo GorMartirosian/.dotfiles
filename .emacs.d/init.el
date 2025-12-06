@@ -73,10 +73,6 @@
   ;; Only useful commands for current buffer are shown in M-x
   (read-extended-command-predicate #'command-completion-default-include-p))
 
-(defun font-exists-p (font)
-  "Check if font exists"
-  (if (null (x-list-fonts font)) nil t)) 
-
 ;; Font
 ;; Change needed on new machine. Install the necessary fonts.
 (set-face-attribute 'default nil
