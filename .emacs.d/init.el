@@ -230,8 +230,8 @@
 
     (defvar my/listed-entries-minibuffer-keymap
       (let ((map (make-sparse-keymap)))
-	(define-key map (kbd "C-n") #'vertico-next)
-	(define-key map (kbd "C-p") #'vertico-previous)
+	(define-key map (kbd "C-n") #'next-line-or-history-element)
+	(define-key map (kbd "C-p") #'previous-line-or-history-element)
 	map))
 
     (defvar my/one-line-minibuffer-keymap
@@ -312,7 +312,7 @@
     (corfu-preselect 'first)      ;; Preselect the prompt
     (corfu-auto t)
     (corfu-quit-no-match 'separator)
-    (corfu-preview-current 'insert)
+    (corfu-preview-current nil)
     (corfu-auto-prefix 2)
     (corfu-auto-delay 0)
     ;; initial time to show docs, time between scrolls to show docs
@@ -340,23 +340,6 @@
   :config
   (my/set-sly-repl-mode-keybindings))
 
-(use-package clojure-mode)
-
-(use-package cider
-  :after clojure-mode
-  :hook (clojure-mode . cider-mode))
-
-(defun my/config-clojure-refactor-mode ()
-    (clj-refactor-mode 1)
-    (yas-minor-mode 1))
-
-(use-package clj-refactor
-  :after clojure-mode
-  :init
-  (setq cljr-add-ns-to-blank-clj-files nil)
-  :hook
-  (clojure-mode . #'my/config-clojure-refactor-mode))
-
 (use-package ultra-scroll
   :vc (:url "https://github.com/jdtsmith/ultra-scroll"
 	    :rev :newest)
@@ -382,28 +365,9 @@
   :config
   (dashboard-setup-startup-hook))
 
-;; For treemacs to work, got to the all-the-icons github
-;;  page and download the fonts manually.
-(use-package treemacs
-  :config
-  (treemacs-git-mode 'deferred)
-  (setopt treemacs-indet-guide-mode 'line)
-  (treemacs-follow-mode t)
-  (treemacs-filewatch-mode t)
-  (treemacs-fringe-indicator-mode 'always))
-
-(use-package treemacs-evil
-  :after (treemacs evil))
-
-(use-package treemacs-magit
-  :after (treemacs magit))
-
-(use-package treemacs-icons-dired
-  :hook (dired-mode . treemacs-icons-dired-enable-once))
-
-(use-package treemacs-nerd-icons
-  :config
-  (treemacs-load-theme "nerd-icons"))
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 
 ;; Install grammars using treesit-auto-install-all
 (use-package treesit-auto
