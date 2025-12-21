@@ -376,12 +376,10 @@
 
 ;; Machine specific: do not forget to install the LSP servers.
 (use-package eglot
-  :after (clojure-mode)
   :init
   (setopt eglot-autoshutdown t)
   :config
-  (dolist (mode-hook '(clojure-mode-hook
-		       c-mode-hook
+  (dolist (mode-hook '(c-mode-hook
 		       c-ts-mode-hook
 		       c++-mode-hook
 		       python-ts-mode-hook
