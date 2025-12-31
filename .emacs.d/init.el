@@ -142,19 +142,6 @@
 (setq-default display-line-numbers-type 'relative)
 (global-display-line-numbers-mode t)
 
-(use-package org-roam
-  :config
-  (unless (file-directory-p "~/OrgRoam")
-    (make-directory "~/OrgRoam" t))
-
-  (setq org-roam-directory (file-truename "~/OrgRoam"))
-
-  (global-set-key (kbd "C-c n l") #'org-roam-buffer-toggle)
-  (global-set-key (kbd "C-c n f") #'org-roam-node-find)
-  (global-set-key (kbd "C-c n i") #'org-roam-node-insert)
-
-  (org-roam-db-autosync-mode))
-
 (use-package vertico
   :custom
   (vertico-count 10)    ; Display at most this many matches
@@ -308,15 +295,15 @@
 
 (use-package corfu
   :custom
-    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-    (corfu-preselect 'first)      ;; Preselect the prompt
-    (corfu-auto t)
-    (corfu-quit-no-match 'separator)
-    (corfu-preview-current nil)
-    (corfu-auto-prefix 2)
-    (corfu-auto-delay 0)
-    ;; initial time to show docs, time between scrolls to show docs
-    (corfu-popupinfo-delay '(0.5 . 0.2))  
+  (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  (corfu-preselect 'valid)      ;; Preselect the prompt
+  (corfu-auto t)
+  (corfu-quit-no-match 'separator)
+  (corfu-preview-current nil)
+  (corfu-auto-prefix 2)
+  (corfu-auto-delay 0)
+  ;; initial time to show docs, time between scrolls to show docs
+  (corfu-popupinfo-delay '(0.5 . 0.2))
   :config
   (global-corfu-mode 1)
   (corfu-history-mode 1)
