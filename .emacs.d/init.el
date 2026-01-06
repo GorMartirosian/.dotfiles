@@ -71,7 +71,7 @@
   (setq trashcan-dirname (expand-file-name "~/Recycle Bin"))))
 
 ;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(keymap-global-set "<escape>" #'keyboard-escape-quit)
 
 ;; Initialize package sources
 (require 'package)
@@ -210,7 +210,7 @@
   :custom
   (consult-mode 1)
   :config
-  (global-set-key (kbd "C-x b") #'consult-buffer))
+  (keymap-global-set "C-x b" #'consult-buffer))
 
 (defun my/consult-line-from-region ()
   "Run `consult-line` with the active region as input."
@@ -227,10 +227,10 @@
 (use-package helpful
   :commands (helpful-callable helpful-variable helpful-command helpful-key)
   :init
-  (global-set-key (kbd "C-h f") #'helpful-callable)
-  (global-set-key (kbd "C-h v") #'helpful-variable)
-  (global-set-key (kbd "C-h k") #'helpful-key)
-  (global-set-key (kbd "C-h x") #'helpful-command))
+  (keymap-global-set "C-h f" #'helpful-callable)
+  (keymap-global-set "C-h v" #'helpful-variable)
+  (keymap-global-set "C-h k" #'helpful-key)
+  (keymap-global-set "C-h x" #'helpful-command))
 
 (defun my/evil-scroll-down-and-center ()
   "Scroll down and center the cursor."
@@ -253,32 +253,32 @@
 			       (my/unhighlight-last-searched-string)
 			       (keyboard-quit)))
   
-  (define-key evil-normal-state-map (kbd "C-d") #'my/evil-scroll-down-and-center)
-  (define-key evil-normal-state-map (kbd "C-u") #'my/evil-scroll-up-and-center)
+  (keymap-set evil-normal-state-map "C-d" #'my/evil-scroll-down-and-center)
+  (keymap-set evil-normal-state-map "C-u" #'my/evil-scroll-up-and-center)
 
-  (define-key evil-insert-state-map (kbd "C-w") 'evil-window-map)
+  (keymap-set evil-insert-state-map "C-w" evil-window-map)
 
-  (keymap-set evil-insert-state-map "C-g" 'evil-normal-state)
+  (keymap-set evil-insert-state-map "C-g" #'evil-normal-state)
   
   (with-eval-after-load 'vertico
 
     (defvar my/listed-entries-minibuffer-keymap
       (let ((map (make-sparse-keymap)))
-	(define-key map (kbd "C-n") #'next-line-or-history-element)
-	(define-key map (kbd "C-p") #'previous-line-or-history-element)
+	(keymap-set map "C-n" #'next-line-or-history-element)
+	(keymap-set map "C-p" #'previous-line-or-history-element)
 	map))
 
     (defvar my/one-line-minibuffer-keymap
       (let ((map (make-sparse-keymap)))
-	(define-key map (kbd "C-n") #'next-line-or-history-element)
-	(define-key map (kbd "C-p") #'previous-line-or-history-element)
+	(keymap-set map "C-n" #'next-line-or-history-element)
+	(keymap-set map "C-p" #'previous-line-or-history-element)
 	map))
 
     (defvar my/extended-global-keymap
       (let ((map (make-sparse-keymap)))
-	(define-key map (kbd "C-S-f") #'consult-grep)
-	(define-key map (kbd "C-f") #'my/consult-line-from-region)
-	(define-key map (kbd "C-S-p") #'consult-find)
+	(keymap-set map "C-S-f" #'consult-grep)
+	(keymap-set map "C-f" #'my/consult-line-from-region)
+	(keymap-set map "C-S-p" #'consult-find)
 	map))
 
     (add-to-list
@@ -304,11 +304,15 @@
   :config
   (evil-mode 1)
 
-  (advice-add 'evil-search-next :after
-              #'(lambda (&rest x) (evil-scroll-line-to-center (line-number-at-pos))))
+  (advice-add 'evil-search-next
+	      :after
+              #'(lambda (&rest x)
+		  (evil-scroll-line-to-center (line-number-at-pos))))
 
-  (advice-add 'evil-search-previous :after
-              #'(lambda (&rest x) (evil-scroll-line-to-center (line-number-at-pos))))
+  (advice-add 'evil-search-previous
+	      :after
+              #'(lambda (&rest x)
+		  (evil-scroll-line-to-center (line-number-at-pos))))
 
   (my/set-additional-keybindings))
 
