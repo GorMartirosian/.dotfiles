@@ -32,6 +32,37 @@
 (set-fringe-mode '(5 . 5))  ; Give some breathing room
 (menu-bar-mode -1)          ; Disable the menu bar
 
+(defun my/unhighlight-last-searched-string ()
+  (interactive)
+  (unhighlight-regexp my/last-searched-string)
+  (setq my/last-searched-string nil))
+
+(defvar my/last-searched-string nil)
+
+(defun my/highlight-new-search ()
+  (let ((last-searched-string (car
+			       (if isearch-regexp
+				   regexp-search-ring
+				 search-ring))))
+    (highlight-regexp
+     last-searched-string
+     'highlight)
+    (setq my/last-searched-string last-searched-string)))
+
+(advice-add
+ 'isearch-exit
+ :after
+ #'(lambda (&rest _args)
+     (my/unhighlight-last-searched-string)
+     (my/highlight-new-search)))
+
+(advice-add
+ 'evil-search-incrementally
+ :after
+ #'(lambda (&rest _args)
+     (my/unhighlight-last-searched-string)
+     (my/highlight-new-search)))
+
 (setq delete-by-moving-to-trash t)
 (cond
  (my/is-macos-system
@@ -181,6 +212,18 @@
   :config
   (global-set-key (kbd "C-x b") #'consult-buffer))
 
+(defun my/consult-line-from-region ()
+  "Run `consult-line` with the active region as input."
+  (interactive)
+  (let ((string-to-search (when (use-region-p)
+			    (buffer-substring-no-properties
+			     (region-beginning)
+			     (region-end)))))
+    (deactivate-mark)
+    (if string-to-search 
+	(consult-line string-to-search)
+      (consult-line))))
+
 (use-package helpful
   :commands (helpful-callable helpful-variable helpful-command helpful-key)
   :init
@@ -205,6 +248,10 @@
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+  (keymap-global-set "C-g" #'(lambda ()
+			       (interactive)
+			       (my/unhighlight-last-searched-string)
+			       (keyboard-quit)))
   
   (define-key evil-normal-state-map (kbd "C-d") #'my/evil-scroll-down-and-center)
   (define-key evil-normal-state-map (kbd "C-u") #'my/evil-scroll-up-and-center)
@@ -230,7 +277,7 @@
     (defvar my/extended-global-keymap
       (let ((map (make-sparse-keymap)))
 	(define-key map (kbd "C-S-f") #'consult-grep)
-	(define-key map (kbd "C-f") #'consult-line)
+	(define-key map (kbd "C-f") #'my/consult-line-from-region)
 	(define-key map (kbd "C-S-p") #'consult-find)
 	map))
 
@@ -296,7 +343,7 @@
 (use-package corfu
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-preselect 'valid)      ;; Preselect the prompt
+  (corfu-preselect 'prompt)      ;; Preselect the prompt
   (corfu-auto t)
   (corfu-quit-no-match 'separator)
   (corfu-preview-current nil)
