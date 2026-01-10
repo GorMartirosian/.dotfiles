@@ -34,16 +34,12 @@
 
 (defun my/unhighlight-last-searched-string ()
   (interactive)
-  (unhighlight-regexp my/last-searched-string)
-  (setq my/last-searched-string nil))
+  (unhighlight-regexp my/last-searched-string))
 
 (defvar my/last-searched-string nil)
 
 (defun my/highlight-new-search ()
-  (let ((last-searched-string (car
-			       (if isearch-regexp
-				   regexp-search-ring
-				 search-ring))))
+  (let ((last-searched-string isearch-string))
     (highlight-regexp
      last-searched-string
      'highlight)
@@ -69,9 +65,6 @@
   (setq trash-directory "~/.Trash"))
  (my/is-windows-system
   (setq trashcan-dirname (expand-file-name "~/Recycle Bin"))))
-
-;; Make ESC quit prompts
-(keymap-global-set "<escape>" #'keyboard-escape-quit)
 
 ;; Initialize package sources
 (require 'package)
@@ -212,6 +205,15 @@
   :config
   (keymap-global-set "C-x b" #'consult-buffer))
 
+(use-package embark
+  :after vertico
+  :config
+  (keymap-global-set "C-;" #'embark-act)
+  (keymap-set vertico-map "C-." #'embark-export))
+
+(use-package embark-consult
+  :after (embark consult))
+
 (defun my/consult-line-from-region ()
   "Run `consult-line` with the active region as input."
   (interactive)
@@ -248,6 +250,9 @@
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (keymap-global-set "<escape>" #'keyboard-escape-quit)
+
   (keymap-global-set "C-g" #'(lambda ()
 			       (interactive)
 			       (my/unhighlight-last-searched-string)
@@ -259,20 +264,11 @@
   (keymap-set evil-insert-state-map "C-w" evil-window-map)
 
   (keymap-set evil-insert-state-map "C-g" #'evil-normal-state)
+
+  (keymap-set isearch-mode-map "C-." #'isearch-occur)
+  (keymap-set evil-normal-state-map "C-." #'isearch-occur)
   
   (with-eval-after-load 'vertico
-
-    (defvar my/listed-entries-minibuffer-keymap
-      (let ((map (make-sparse-keymap)))
-	(keymap-set map "C-n" #'next-line-or-history-element)
-	(keymap-set map "C-p" #'previous-line-or-history-element)
-	map))
-
-    (defvar my/one-line-minibuffer-keymap
-      (let ((map (make-sparse-keymap)))
-	(keymap-set map "C-n" #'next-line-or-history-element)
-	(keymap-set map "C-p" #'previous-line-or-history-element)
-	map))
 
     (defvar my/extended-global-keymap
       (let ((map (make-sparse-keymap)))
@@ -281,19 +277,19 @@
 	(keymap-set map "C-S-p" #'consult-find)
 	map))
 
-    (add-to-list
-     'emulation-mode-map-alists
-     `((my/is-listed-entries-minibuffer-keymap-enabled . ,my/listed-entries-minibuffer-keymap)))
-    (add-to-list
-     'emulation-mode-map-alists
-     `((my/is-one-line-minibuffer-keymap-enabled . ,my/one-line-minibuffer-keymap)))
     (add-to-list 'emulation-mode-map-alists `((t . ,my/extended-global-keymap)))
 
     (add-hook 'minibuffer-setup-hook
 	      #'(lambda ()
+		  (evil-local-set-key 'normal (kbd "C-n") 'next-line-or-history-element)
+		  (evil-local-set-key 'normal (kbd "C-p") 'previous-line-or-history-element)
 		  (if (eq this-command 'eval-expression)
-		      (setq-local my/is-one-line-minibuffer-keymap-enabled t)
-		    (setq-local my/is-listed-entries-minibuffer-keymap-enabled t))))))
+		      (progn
+			(evil-local-set-key 'insert (kbd "C-n") 'corfu-next)
+			(evil-local-set-key 'insert (kbd "C-p") 'corfu-previous))
+		    (progn
+		      (evil-local-set-key 'insert (kbd "C-n") 'next-line-or-history-element)
+		      (evil-local-set-key 'insert (kbd "C-p") 'previous-line-or-history-element)))))))
 
 (use-package evil
   :init
@@ -301,6 +297,7 @@
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-minibuffer t)
+  (setq evil-regexp-search nil)
   :config
   (evil-mode 1)
 
