@@ -36,7 +36,7 @@
   (interactive)
   (unhighlight-regexp my/last-searched-string))
 
-(defvar my/last-searched-string nil)
+(defvar-local my/last-searched-string nil)
 
 (defun my/highlight-new-search ()
   (let ((last-searched-string isearch-string))
@@ -246,6 +246,16 @@
   (evil-scroll-up nil)
   (recenter))
 
+(defun my/keyboard-escape-quit-and-unhighlight ()
+  (interactive)
+  (my/unhighlight-last-searched-string)
+  (keyboard-escape-quit))
+
+(defun my/keyboard-quit-and-unhighlight ()
+  (interactive)
+  (my/unhighlight-last-searched-string)
+  (keyboard-quit))
+
 (defun my/set-additional-keybindings ()
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -253,10 +263,9 @@
 
   (keymap-global-set "<escape>" #'keyboard-escape-quit)
 
-  (keymap-global-set "C-g" #'(lambda ()
-			       (interactive)
-			       (my/unhighlight-last-searched-string)
-			       (keyboard-quit)))
+  (keymap-set evil-normal-state-map "<escape>" #'my/keyboard-escape-quit-and-unhighlight)
+
+  (keymap-global-set "C-g" #'my/keyboard-quit-and-unhighlight)
   
   (keymap-set evil-normal-state-map "C-d" #'my/evil-scroll-down-and-center)
   (keymap-set evil-normal-state-map "C-u" #'my/evil-scroll-up-and-center)
