@@ -104,6 +104,8 @@
 		    :height 120
 		    :weight 'medium)
 
+(setq show-paren-delay 0) 
+
 (add-hook 'prog-mode-hook
           #'(lambda ()
 	      (set-face-attribute 'font-lock-comment-face
@@ -113,6 +115,11 @@
 				  :foreground "cyan4")
 	      (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
 	      (set-face-attribute 'font-lock-type-face nil :weight 'bold)
+	      (let ((fg (face-foreground 'default nil 'default)))
+		(set-face-attribute 'show-paren-match nil
+				    :box `(:line-width (-1 . -1) :color ,fg)))
+	      (set-face-attribute 'show-paren-mismatch nil
+				  :box '(:line-width (-1 . -1) :color "red"))
 	      (hs-minor-mode 1)))
 
 (add-hook 'help-mode-hook
@@ -288,6 +295,7 @@
   (keymap-set evil-normal-state-map "C-u" #'my/evil-scroll-up-and-center)
 
   (keymap-set evil-insert-state-map "C-w" evil-window-map)
+  (keymap-set isearch-mode-map "C-w" evil-window-map)
 
   (keymap-set evil-insert-state-map "C-g" #'evil-normal-state)
 
