@@ -32,6 +32,9 @@
 (set-fringe-mode '(5 . 5))  ; Give some breathing room
 (menu-bar-mode -1)          ; Disable the menu bar
 
+(setq search-whitespace-regexp ".*?")
+(setq search-nonincremental-instead nil)
+
 (defun my/unhighlight-last-searched-string ()
   (interactive)
   (unhighlight-regexp my/last-searched-string))
@@ -261,11 +264,13 @@
 
 (defun my/keyboard-escape-quit-and-unhighlight ()
   (interactive)
+  (isearch-exit)
   (my/unhighlight-last-searched-string)
   (keyboard-escape-quit))
 
 (defun my/keyboard-quit-and-unhighlight ()
   (interactive)
+  (isearch-exit)
   (my/unhighlight-last-searched-string)
   (keyboard-quit))
 
@@ -279,6 +284,11 @@
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
   (keymap-global-set "<escape>" #'keyboard-escape-quit)
+
+  (keymap-set evil-normal-state-map "/" #'isearch-forward)
+  (keymap-set evil-normal-state-map "?" #'isearch-backward)
+  (keymap-set evil-normal-state-map "n" #'isearch-repeat-forward)
+  (keymap-set evil-normal-state-map "N" #'isearch-repeat-backward)
 
   (keymap-set evil-normal-state-map "<escape>" #'my/keyboard-escape-quit-and-unhighlight)
 
