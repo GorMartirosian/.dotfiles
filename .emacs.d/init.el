@@ -156,7 +156,6 @@
   (setopt vlf-application 'dont-ask))
 
 (use-package which-key
-  :defer 0
   :diminish which-key-mode
   :config
   (which-key-mode 1)
@@ -209,7 +208,21 @@
   :after vertico
   :config
   (keymap-global-set "C-;" #'embark-act)
+  (setq grep-use-headings t)
   (keymap-set vertico-map "C-." #'embark-export))
+
+(defun my/hide-line ()
+  (interactive)
+  (let ((inhibit-read-only t))
+    (kill-whole-line)
+    (delete-blank-lines)))
+
+(add-hook 'grep-mode-hook
+          (lambda ()
+            (face-remap-add-relative 'default :height 0.9)
+            (face-remap-add-relative 'grep-heading :height 1.3 :weight 'bold)
+
+	    (keymap-set evil-normal-state-local-map "d" #'my/hide-line)))
 
 (use-package embark-consult
   :after (embark consult))
@@ -255,6 +268,10 @@
   (interactive)
   (my/unhighlight-last-searched-string)
   (keyboard-quit))
+
+(add-hook 'occur-mode-hook
+	  #'(lambda ()
+	      (keymap-set evil-normal-state-local-map "d" #'my/hide-line)))
 
 (defun my/set-additional-keybindings ()
   ;; Use visual line motions even outside of visual-line-mode buffers
@@ -418,6 +435,10 @@
   :config
   (global-treesit-auto-mode))
 
+(use-package rainbow-delimiters
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
 ;; Machine specific: do not forget to install the LSP servers.
 (use-package eglot
   :init
@@ -429,3 +450,7 @@
 		       python-ts-mode-hook
 		       js-ts-mode-hook))
     (add-hook mode-hook #'eglot-ensure)))
+
+;; (use-package wgrep
+;;   :config
+;;   (setq wgrep-enable-key "i"))
