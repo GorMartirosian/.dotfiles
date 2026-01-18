@@ -32,11 +32,13 @@
 (set-fringe-mode '(5 . 5))  ; Give some breathing room
 (menu-bar-mode -1)          ; Disable the menu bar
 
+(setq search-nonincremental-instead nil)
+
+(defvar-local my/last-searched-string nil)
+
 (defun my/unhighlight-last-searched-string ()
   (interactive)
   (unhighlight-regexp my/last-searched-string))
-
-(defvar-local my/last-searched-string nil)
 
 (defun my/highlight-new-search ()
   (let ((last-searched-string isearch-string))
@@ -280,6 +282,11 @@
 	  #'(lambda ()
 	      (keymap-set evil-normal-state-local-map "d" #'my/hide-line)))
 
+(defun my/isearch-occur-and-jump-to-window ()
+  (interactive)
+  (isearch-occur isearch-string)
+  (other-window 1))
+
 (defun my/set-additional-keybindings ()
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -295,12 +302,10 @@
   (keymap-set evil-normal-state-map "C-u" #'my/evil-scroll-up-and-center)
 
   (keymap-set evil-insert-state-map "C-w" evil-window-map)
-  (keymap-set isearch-mode-map "C-w" evil-window-map)
 
   (keymap-set evil-insert-state-map "C-g" #'evil-normal-state)
 
-  (keymap-set isearch-mode-map "C-." #'isearch-occur)
-  (keymap-set evil-normal-state-map "C-." #'isearch-occur)
+  (keymap-set evil-normal-state-map "C-." #'my/isearch-occur-and-jump-to-window)
   
   (with-eval-after-load 'vertico
 
