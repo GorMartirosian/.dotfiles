@@ -40,11 +40,15 @@
   (interactive)
   (unhighlight-regexp my/last-searched-string))
 
+(defface my/search-hl-face
+  '((t :inherit lazy-highlight))
+  "Face for my persistent search highlight.")
+
 (defun my/highlight-new-search ()
   (let ((last-searched-string isearch-string))
     (highlight-regexp
      last-searched-string
-     'highlight)
+     'my/search-hl-face)
     (setq my/last-searched-string last-searched-string)))
 
 (advice-add
@@ -56,6 +60,13 @@
 
 (advice-add
  'evil-search-incrementally
+ :after
+ #'(lambda (&rest _args)
+     (my/unhighlight-last-searched-string)
+     (my/highlight-new-search)))
+
+(advice-add
+ 'evil-search-word-forward
  :after
  #'(lambda (&rest _args)
      (my/unhighlight-last-searched-string)
@@ -293,6 +304,7 @@
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
   (keymap-global-set "<escape>" #'keyboard-escape-quit)
+  (keymap-global-set "<mouse-3>" #'context-menu-open)
 
   (keymap-set evil-normal-state-map "<escape>" #'my/keyboard-escape-quit-and-unhighlight)
 
@@ -320,13 +332,13 @@
 
     (add-hook 'minibuffer-setup-hook
 	      #'(lambda ()
-		  (evil-local-set-key 'normal (kbd "C-n") 'next-line-or-history-element)
-		  (evil-local-set-key 'normal (kbd "C-p") 'previous-line-or-history-element)
 		  (if (eq this-command 'eval-expression)
 		      (progn
 			(evil-local-set-key 'insert (kbd "C-n") 'corfu-next)
 			(evil-local-set-key 'insert (kbd "C-p") 'corfu-previous))
 		    (progn
+		      (evil-local-set-key 'normal (kbd "C-n") 'next-line-or-history-element)
+		      (evil-local-set-key 'normal (kbd "C-p") 'previous-line-or-history-element)
 		      (evil-local-set-key 'insert (kbd "C-n") 'next-line-or-history-element)
 		      (evil-local-set-key 'insert (kbd "C-p") 'previous-line-or-history-element)))))))
 
@@ -336,7 +348,8 @@
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-minibuffer t)
-  (setq evil-regexp-search nil)
+  (setq evil-regexp-search t)
+  (setq evil-symbol-word-search t)
   :config
   (evil-mode 1)
 
