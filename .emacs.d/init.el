@@ -89,11 +89,11 @@
 (package-initialize)
 
 (unless package-archive-contents
- (package-refresh-contents))
+  (package-refresh-contents))
 
 ;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
-   (package-install 'use-package))
+  (package-install 'use-package))
 
 (require 'use-package)
 
@@ -470,12 +470,22 @@
   :init
   (setopt eglot-autoshutdown t)
   :config
-  (dolist (mode-hook '(c-mode-hook
-		       c-ts-mode-hook
-		       c++-mode-hook
+  (dolist (mode-hook '(c-ts-mode-hook
+		       c++-ts-mode-hook
 		       python-ts-mode-hook
-		       js-ts-mode-hook))
+		       js-ts-mode-hook
+		       css-ts-mode-hook
+		       html-ts-mode-hook
+		       json-ts-mode-hook))
     (add-hook mode-hook #'eglot-ensure)))
+
+(use-package apheleia
+  :config
+  (apheleia-global-mode +1)
+  (setf (alist-get 'prettier-javascript apheleia-formatters)
+	'("apheleia-npx" "prettier" "--stdin-filepath" filepath))
+  (setf (alist-get 'prettier-html apheleia-formatters)
+	'("apheleia-npx" "prettier" "--stdin-filepath" filepath)))
 
 ;; (use-package wgrep
 ;;   :config
