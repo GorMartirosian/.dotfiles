@@ -45,28 +45,35 @@
   "Face for my persistent search highlight.")
 
 (defun my/highlight-new-search ()
-  (let ((last-searched-string isearch-string))
+  (let ((last-searched-string (car evil-ex-search-history)))
     (highlight-regexp
      last-searched-string
      'my/search-hl-face)
     (setq my/last-searched-string last-searched-string)))
 
 (advice-add
- 'isearch-exit
+ 'evil-ex-start-search
  :after
  #'(lambda (&rest _args)
      (my/unhighlight-last-searched-string)
      (my/highlight-new-search)))
 
 (advice-add
- 'evil-search-incrementally
+ 'evil-ex-search-next
  :after
  #'(lambda (&rest _args)
      (my/unhighlight-last-searched-string)
      (my/highlight-new-search)))
 
 (advice-add
- 'evil-search-word-forward
+ 'evil-ex-search-previous
+ :after
+ #'(lambda (&rest _args)
+     (my/unhighlight-last-searched-string)
+     (my/highlight-new-search)))
+
+(advice-add
+ 'evil-ex-start-word-search
  :after
  #'(lambda (&rest _args)
      (my/unhighlight-last-searched-string)
@@ -332,18 +339,21 @@
 
     (add-hook 'minibuffer-setup-hook
 	      #'(lambda ()
+		  (evil-local-set-key 'normal (kbd "C-n") 'next-line-or-history-element)
+		  (evil-local-set-key 'normal (kbd "C-p") 'previous-line-or-history-element)
 		  (if (eq this-command 'eval-expression)
 		      (progn
 			(evil-local-set-key 'insert (kbd "C-n") 'corfu-next)
 			(evil-local-set-key 'insert (kbd "C-p") 'corfu-previous))
 		    (progn
-		      (evil-local-set-key 'normal (kbd "C-n") 'next-line-or-history-element)
-		      (evil-local-set-key 'normal (kbd "C-p") 'previous-line-or-history-element)
 		      (evil-local-set-key 'insert (kbd "C-n") 'next-line-or-history-element)
 		      (evil-local-set-key 'insert (kbd "C-p") 'previous-line-or-history-element)))))))
 
 (use-package evil
   :init
+  (setq evil-search-module 'evil-search)
+  (setq evil-ex-search-persistent-highlight nil)
+  (setq evil-ex-search-highlight-all nil)
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
