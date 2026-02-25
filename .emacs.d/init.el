@@ -300,10 +300,21 @@
 	  #'(lambda ()
 	      (keymap-set evil-normal-state-local-map "d" #'my/hide-line)))
 
+(defun my/evil-strip-boundaries (s)
+  "Remove Emacs symbol-boundary tokens \\_< and \\_> from S."
+  (when (stringp s)
+    (setq s (string-replace "\\_<" "" s))
+    (setq s (string-replace "\\_>" "" s))
+    s))
+
 (defun my/isearch-occur-and-jump-to-window ()
   (interactive)
-  (isearch-occur isearch-string)
-  (other-window 1))
+  (let* ((raw (car evil-ex-search-history))
+         (pattern (my/evil-strip-boundaries raw)))
+    (unless (and pattern (not (string-empty-p pattern)))
+      (user-error "No Evil search pattern in evil-ex-search-history"))
+    (isearch-occur pattern)
+    (other-window 1)))
 
 (defun my/set-additional-keybindings ()
   ;; Use visual line motions even outside of visual-line-mode buffers
