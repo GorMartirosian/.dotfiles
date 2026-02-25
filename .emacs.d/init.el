@@ -36,9 +36,13 @@
 
 (defvar-local my/last-searched-string nil)
 
+(defvar-local my/evil-last-search-candidate-overlay nil)
+
 (defun my/unhighlight-last-searched-string ()
   (interactive)
-  (unhighlight-regexp my/last-searched-string))
+  (unhighlight-regexp my/last-searched-string)
+  (when (overlayp my/evil-last-search-candidate-overlay)
+    (delete-overlay my/evil-last-search-candidate-overlay)))
 
 (defface my/search-hl-face
   '((t :inherit lazy-highlight))
@@ -46,9 +50,13 @@
 
 (defun my/highlight-new-search ()
   (let ((last-searched-string (car evil-ex-search-history)))
-    (highlight-regexp
-     last-searched-string
-     'my/search-hl-face)
+    (highlight-regexp last-searched-string 'my/search-hl-face)
+    (when (looking-at last-searched-string)
+      (let ((last-searched-string-size
+	     (length (my/evil-strip-boundaries last-searched-string))))
+	(setq my/evil-last-search-candidate-overlay
+	      (make-overlay (point) (+ (point) last-searched-string-size)))
+	(overlay-put my/evil-last-search-candidate-overlay 'face 'isearch)))
     (setq my/last-searched-string last-searched-string)))
 
 (advice-add
