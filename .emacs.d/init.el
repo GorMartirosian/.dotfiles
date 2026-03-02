@@ -262,18 +262,6 @@
 (use-package embark-consult
   :after (embark consult))
 
-(defun my/consult-line-from-region ()
-  "Run `consult-line` with the active region as input."
-  (interactive)
-  (let ((string-to-search (when (use-region-p)
-			    (buffer-substring-no-properties
-			     (region-beginning)
-			     (region-end)))))
-    (deactivate-mark)
-    (if string-to-search 
-	(consult-line string-to-search)
-      (consult-line))))
-
 (use-package helpful
   :commands (helpful-callable helpful-variable helpful-command helpful-key)
   :init
@@ -324,6 +312,26 @@
     (isearch-occur pattern)
     (other-window 1)))
 
+(defun my/setup-minibuffer-keys ()
+  (cond
+   ((memq this-command '(consult-grep consult-line))
+    (evil-local-set-key 'normal (kbd "C-n") #'next-history-element)
+    (evil-local-set-key 'normal (kbd "C-p") #'previous-history-element)
+    (evil-local-set-key 'insert (kbd "C-n") #'vertico-next)
+    (evil-local-set-key 'insert (kbd "C-p") #'vertico-previous))
+
+   ((eq this-command 'eval-expression)
+    (evil-local-set-key 'normal (kbd "C-n") #'next-line-or-history-element)
+    (evil-local-set-key 'normal (kbd "C-p") #'previous-line-or-history-element)
+    (evil-local-set-key 'insert (kbd "C-n") #'corfu-next)
+    (evil-local-set-key 'insert (kbd "C-p") #'corfu-previous))
+
+   (t
+    (evil-local-set-key 'normal (kbd "C-n") #'next-line-or-history-element)
+    (evil-local-set-key 'normal (kbd "C-p") #'previous-line-or-history-element)
+    (evil-local-set-key 'insert (kbd "C-n") #'next-line-or-history-element)
+    (evil-local-set-key 'insert (kbd "C-p") #'previous-line-or-history-element))))
+
 (defun my/set-additional-keybindings ()
   ;; Use visual line motions even outside of visual-line-mode buffers
   (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -345,28 +353,19 @@
 
   (keymap-set evil-normal-state-map "C-." #'my/isearch-occur-and-jump-to-window)
   
-  (with-eval-after-load 'vertico
+  (with-eval-after-load 'consult
 
     (defvar my/extended-global-keymap
       (let ((map (make-sparse-keymap)))
 	(keymap-set map "C-S-f" #'consult-grep)
-	(keymap-set map "C-f" #'my/consult-line-from-region)
+	(keymap-set map "C-f" #'consult-line)
 	(keymap-set map "C-S-p" #'consult-find)
 	map))
 
-    (add-to-list 'emulation-mode-map-alists `((t . ,my/extended-global-keymap)))
+    (add-to-list 'emulation-mode-map-alists `((t . ,my/extended-global-keymap))))
 
-    (add-hook 'minibuffer-setup-hook
-	      #'(lambda ()
-		  (evil-local-set-key 'normal (kbd "C-n") 'next-line-or-history-element)
-		  (evil-local-set-key 'normal (kbd "C-p") 'previous-line-or-history-element)
-		  (if (eq this-command 'eval-expression)
-		      (progn
-			(evil-local-set-key 'insert (kbd "C-n") 'corfu-next)
-			(evil-local-set-key 'insert (kbd "C-p") 'corfu-previous))
-		    (progn
-		      (evil-local-set-key 'insert (kbd "C-n") 'next-line-or-history-element)
-		      (evil-local-set-key 'insert (kbd "C-p") 'previous-line-or-history-element)))))))
+  (with-eval-after-load 'vertico
+    (add-hook 'minibuffer-setup-hook #'my/setup-minibuffer-keys)))
 
 (use-package evil
   :init
