@@ -348,7 +348,6 @@
     (keymap-set evil-insert-state-local-map "C-p" #'previous-line-or-history-element))))
 
 (defun my/unset-minibuffer-keys (&rest _)
-  (message "Vzgo")
   (keymap-unset evil-insert-state-local-map "C-." t)
   (keymap-unset evil-normal-state-local-map "C-." t)
   (keymap-unset evil-insert-state-local-map "C-p" t)
