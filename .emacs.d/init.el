@@ -165,9 +165,6 @@
   (load-theme 'doom-molokai t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
-  ;; for treemacs users
-  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
-  (doom-themes-treemacs-config)
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
@@ -312,25 +309,52 @@
     (isearch-occur pattern)
     (other-window 1)))
 
+(defun my/isearch-occur-and-jump-to-window-from-evil-search ()
+  (interactive)
+  (let* ((raw (minibuffer-contents-no-properties))
+         (pattern (my/evil-strip-boundaries raw)))
+    (unless (and pattern (not (string-empty-p pattern)))
+      (user-error "No Evil search pattern"))
+    (run-at-time
+     0 nil
+     (lambda ()
+       (isearch-occur pattern)
+       (other-window 1)))
+    (exit-minibuffer)))
+
 (defun my/setup-minibuffer-keys ()
   (cond
    ((memq this-command '(consult-grep consult-line))
-    (evil-local-set-key 'normal (kbd "C-n") #'next-history-element)
-    (evil-local-set-key 'normal (kbd "C-p") #'previous-history-element)
-    (evil-local-set-key 'insert (kbd "C-n") #'vertico-next)
-    (evil-local-set-key 'insert (kbd "C-p") #'vertico-previous))
+    (keymap-set evil-normal-state-local-map "C-n" #'next-history-element)
+    (keymap-set evil-normal-state-local-map "C-p" #'previous-history-element)
+    (keymap-set evil-insert-state-local-map "C-n" #'vertico-next)
+    (keymap-set evil-insert-state-local-map "C-p" #'vertico-previous)
+    (keymap-set evil-insert-state-local-map "C-." #'embark-export)
+    (keymap-set evil-normal-state-local-map "C-." #'embark-export))
 
    ((eq this-command 'eval-expression)
-    (evil-local-set-key 'normal (kbd "C-n") #'next-line-or-history-element)
-    (evil-local-set-key 'normal (kbd "C-p") #'previous-line-or-history-element)
-    (evil-local-set-key 'insert (kbd "C-n") #'corfu-next)
-    (evil-local-set-key 'insert (kbd "C-p") #'corfu-previous))
+    (keymap-set evil-normal-state-local-map "C-n" #'next-line-or-history-element)
+    (keymap-set evil-normal-state-local-map "C-p" #'previous-line-or-history-element)
+    (keymap-set evil-insert-state-local-map "C-n" #'corfu-next)
+    (keymap-set evil-insert-state-local-map "C-p" #'corfu-previous))
 
    (t
-    (evil-local-set-key 'normal (kbd "C-n") #'next-line-or-history-element)
-    (evil-local-set-key 'normal (kbd "C-p") #'previous-line-or-history-element)
-    (evil-local-set-key 'insert (kbd "C-n") #'next-line-or-history-element)
-    (evil-local-set-key 'insert (kbd "C-p") #'previous-line-or-history-element))))
+    (when (eq this-command 'evil-ex-search-forward)
+      (keymap-set evil-normal-state-local-map "C-." #'my/isearch-occur-and-jump-to-window-from-evil-search)
+      (keymap-set evil-insert-state-local-map "C-." #'my/isearch-occur-and-jump-to-window-from-evil-search))
+    (keymap-set evil-normal-state-local-map "C-n" #'next-line-or-history-element)
+    (keymap-set evil-normal-state-local-map "C-p" #'previous-line-or-history-element)
+    (keymap-set evil-insert-state-local-map "C-n" #'next-line-or-history-element)
+    (keymap-set evil-insert-state-local-map "C-p" #'previous-line-or-history-element))))
+
+(defun my/unset-minibuffer-keys (&rest _)
+  (message "Vzgo")
+  (keymap-unset evil-insert-state-local-map "C-." t)
+  (keymap-unset evil-normal-state-local-map "C-." t)
+  (keymap-unset evil-insert-state-local-map "C-p" t)
+  (keymap-unset evil-normal-state-local-map "C-p" t)
+  (keymap-unset evil-insert-state-local-map "C-n" t)
+  (keymap-unset evil-normal-state-local-map "C-n" t))
 
 (defun my/set-additional-keybindings ()
   ;; Use visual line motions even outside of visual-line-mode buffers
@@ -365,7 +389,9 @@
     (add-to-list 'emulation-mode-map-alists `((t . ,my/extended-global-keymap))))
 
   (with-eval-after-load 'vertico
-    (add-hook 'minibuffer-setup-hook #'my/setup-minibuffer-keys)))
+    (add-hook 'minibuffer-setup-hook #'my/setup-minibuffer-keys))
+
+  (advice-add 'abort-minibuffers :before #'my/unset-minibuffer-keys))
 
 (use-package evil
   :init
@@ -383,12 +409,12 @@
 
   (advice-add 'evil-search-next
 	      :after
-              #'(lambda (&rest x)
+	      #'(lambda (&rest x)
 		  (evil-scroll-line-to-center (line-number-at-pos))))
 
   (advice-add 'evil-search-previous
 	      :after
-              #'(lambda (&rest x)
+	      #'(lambda (&rest x)
 		  (evil-scroll-line-to-center (line-number-at-pos))))
 
   (my/set-additional-keybindings))
