@@ -324,7 +324,7 @@
 
 (defun my/setup-minibuffer-keys ()
   (cond
-   ((memq this-command '(consult-grep consult-line))
+   ((memq this-command '(consult-ripgrep consult-line))
     (keymap-set evil-normal-state-local-map "C-n" #'next-history-element)
     (keymap-set evil-normal-state-local-map "C-p" #'previous-history-element)
     (keymap-set evil-insert-state-local-map "C-n" #'vertico-next)
@@ -380,7 +380,7 @@
 
     (defvar my/extended-global-keymap
       (let ((map (make-sparse-keymap)))
-	(keymap-set map "C-S-f" #'consult-grep)
+	(keymap-set map "C-S-f" #'consult-ripgrep)
 	(keymap-set map "C-f" #'consult-line)
 	(keymap-set map "C-S-p" #'consult-find)
 	map))
@@ -479,6 +479,14 @@
   (setq inferior-lisp-program "sbcl")
   :config
   (my/set-sly-repl-mode-keybindings))
+
+(setq-default truncate-lines nil)
+(setq auto-hscroll-mode t)
+(setq mouse-wheel-tilt-scroll t)
+(setq mouse-wheel-progressive-speed nil)
+
+(setq hscroll-step 7)
+(setq hscroll-margin 3)
 
 (use-package ultra-scroll
   :vc (:url "https://github.com/jdtsmith/ultra-scroll"
