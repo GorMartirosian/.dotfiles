@@ -29,7 +29,7 @@
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
 (tooltip-mode -1)           ; Disable tooltips
-(set-fringe-mode '(5 . 5))  ; Give some breathing room
+(set-fringe-mode '(5 . 12)) ; Give some breathing room
 (menu-bar-mode -1)          ; Disable the menu bar
 
 (setq search-nonincremental-instead nil)
@@ -480,7 +480,8 @@
   :config
   (my/set-sly-repl-mode-keybindings))
 
-(setq-default truncate-lines nil)
+(setq-default truncate-lines t)
+(setq truncate-partial-width-windows nil)
 (setq auto-hscroll-mode t)
 (setq mouse-wheel-tilt-scroll t)
 (setq mouse-wheel-progressive-speed nil)
