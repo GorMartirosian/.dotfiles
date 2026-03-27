@@ -252,7 +252,7 @@
 (add-hook 'grep-mode-hook
           (lambda ()
             (face-remap-add-relative 'default :height 0.9)
-            (face-remap-add-relative 'grep-heading :height 1.3 :weight 'bold)
+            (face-remap-add-relative 'grep-heading :height 1.1 :weight 'bold)
 
 	    (keymap-set evil-normal-state-local-map "d" #'my/hide-line)))
 
@@ -324,7 +324,7 @@
 
 (defun my/setup-minibuffer-keys ()
   (cond
-   ((memq this-command '(consult-ripgrep consult-line))
+   ((memq this-command '(consult-ripgrep consult-find consult-line))
     (keymap-set evil-normal-state-local-map "C-n" #'next-history-element)
     (keymap-set evil-normal-state-local-map "C-p" #'previous-history-element)
     (keymap-set evil-insert-state-local-map "C-n" #'vertico-next)
@@ -366,7 +366,7 @@
   (keymap-set evil-normal-state-map "<escape>" #'my/keyboard-escape-quit-and-unhighlight)
 
   (keymap-global-set "C-g" #'my/keyboard-quit-and-unhighlight)
-  
+
   (keymap-set evil-normal-state-map "C-d" #'my/evil-scroll-down-and-center)
   (keymap-set evil-normal-state-map "C-u" #'my/evil-scroll-up-and-center)
 
@@ -375,7 +375,7 @@
   (keymap-set evil-insert-state-map "C-g" #'evil-normal-state)
 
   (keymap-set evil-normal-state-map "C-." #'my/isearch-occur-and-jump-to-window)
-  
+
   (with-eval-after-load 'consult
 
     (defvar my/extended-global-keymap
@@ -485,6 +485,8 @@
 (setq auto-hscroll-mode t)
 (setq mouse-wheel-tilt-scroll t)
 (setq mouse-wheel-progressive-speed nil)
+;; OS specific
+(setq mouse-wheel-flip-direction nil)
 
 (setq hscroll-step 7)
 (setq hscroll-margin 3)
@@ -510,7 +512,7 @@
 					#'dashboard-insert-init-info
 					#'dashboard-insert-items
 					#'dashboard-insert-newline))
-  
+
   :config
   (dashboard-setup-startup-hook))
 
@@ -549,6 +551,46 @@
   (setf (alist-get 'prettier-html apheleia-formatters)
 	'("apheleia-npx" "prettier" "--stdin-filepath" filepath)))
 
-;; (use-package wgrep
-;;   :config
-;;   (setq wgrep-enable-key "i"))
+(use-package treemacs
+  :config
+  (treemacs-git-mode 'deferred)
+  (treemacs-indent-guide-mode t)
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t)
+  (treemacs-fringe-indicator-mode 'always))
+
+(use-package treemacs-evil
+  :after (treemacs evil))
+
+(use-package treemacs-magit
+  :after (treemacs magit))
+
+(use-package treemacs-nerd-icons
+  :config
+  (treemacs-load-theme "nerd-icons"))
+
+(use-package centaur-tabs
+  :custom
+  (centaur-tabs-set-bar 'over)
+  :config
+
+  (defun centaur-tabs-buffer-groups ()
+    "Use as few groups as possible."
+    (list (cond ((string-equal "*" (substring (buffer-name) 0 1))
+		 (cond ((string-equal "eglot" (downcase (substring (buffer-name) 1 6)))
+			"Eglot")
+                       (t
+			"Tools")))
+		((string-equal "magit" (downcase (substring (buffer-name) 0 5)))
+		 "Magit")
+		(t
+		 "Default"))))
+
+  (centaur-tabs-mode t)
+  (setopt
+   centaur-tabs-height 32 
+   centaur-tabs-set-icons t
+   centaur-tabs-icon-type 'nerd-icons
+   centaur-tabs-set-modified-marker t
+   centaur-tabs-modified-marker "●"))
+
