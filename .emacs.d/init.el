@@ -170,7 +170,16 @@
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 10)))
+  :custom ((doom-modeline-height 10))
+  :config
+  (setq doom-modeline-buffer-file-name-style 'truncate-nil))
+
+(use-package anzu
+  :config
+  (global-anzu-mode 1))
+
+(use-package evil-anzu
+  :after (evil anzu))
 
 ;;Change Emacs backup file location
 (setq backup-directory-alist
@@ -282,11 +291,13 @@
 (defun my/keyboard-escape-quit-and-unhighlight ()
   (interactive)
   (my/unhighlight-last-searched-string)
+  (anzu--reset-mode-line)
   (keyboard-escape-quit))
 
 (defun my/keyboard-quit-and-unhighlight ()
   (interactive)
   (my/unhighlight-last-searched-string)
+  (anzu--reset-mode-line)
   (keyboard-quit))
 
 (add-hook 'occur-mode-hook
@@ -594,3 +605,13 @@
    centaur-tabs-set-modified-marker t
    centaur-tabs-modified-marker "●"))
 
+;; (use-package multiple-cursors
+;;   :config
+;;   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+;;   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+;;   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+;;   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+
+;; (use-package wgrep
+;;   :config
+;;   (setq wgrep-enable-key "i"))
