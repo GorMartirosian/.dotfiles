@@ -503,8 +503,6 @@
 (setq hscroll-margin 3)
 
 (use-package ultra-scroll
-  :vc (:url "https://github.com/jdtsmith/ultra-scroll"
-	    :rev :newest)
   :init
   (setq scroll-conservatively 101 ; important!
         scroll-margin 0)
