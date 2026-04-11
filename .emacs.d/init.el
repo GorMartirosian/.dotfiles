@@ -577,39 +577,3 @@
 (use-package treemacs-nerd-icons
   :config
   (treemacs-load-theme "nerd-icons"))
-
-(use-package centaur-tabs
-  :custom
-  (centaur-tabs-set-bar 'over)
-  :config
-
-  (defun centaur-tabs-buffer-groups ()
-    "Use as few groups as possible."
-    (list (cond ((string-equal "*" (substring (buffer-name) 0 1))
-		 (cond ((string-equal "eglot" (downcase (substring (buffer-name) 1 6)))
-			"Eglot")
-                       (t
-			"Tools")))
-		((string-equal "magit" (downcase (substring (buffer-name) 0 5)))
-		 "Magit")
-		(t
-		 "Default"))))
-
-  (centaur-tabs-mode t)
-  (setopt
-   centaur-tabs-height 32 
-   centaur-tabs-set-icons t
-   centaur-tabs-icon-type 'nerd-icons
-   centaur-tabs-set-modified-marker t
-   centaur-tabs-modified-marker "●"))
-
-;; (use-package multiple-cursors
-;;   :config
-;;   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-;;   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;;   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;;   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
-
-;; (use-package wgrep
-;;   :config
-;;   (setq wgrep-enable-key "i"))
