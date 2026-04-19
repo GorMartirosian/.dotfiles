@@ -1,5 +1,4 @@
 set clipboard=unnamedplus
-set paste
 set relativenumber 
 set smartcase
 set hlsearch 
