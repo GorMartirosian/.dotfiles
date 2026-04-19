@@ -33,59 +33,9 @@
 (menu-bar-mode -1)          ; Disable the menu bar
 
 (setq search-nonincremental-instead nil)
-
-(defvar-local my/last-searched-string nil)
-
-(defvar-local my/evil-last-search-candidate-overlay nil)
-
-(defun my/unhighlight-last-searched-string ()
-  (interactive)
-  (unhighlight-regexp my/last-searched-string)
-  (when (overlayp my/evil-last-search-candidate-overlay)
-    (delete-overlay my/evil-last-search-candidate-overlay)))
-
-(defface my/search-hl-face
-  '((t :inherit lazy-highlight))
-  "Face for my persistent search highlight.")
-
-(defun my/highlight-new-search ()
-  (let ((last-searched-string (car evil-ex-search-history)))
-    (highlight-regexp last-searched-string 'my/search-hl-face)
-    (when (looking-at last-searched-string)
-      (let ((last-searched-string-size
-	     (length (my/evil-strip-boundaries last-searched-string))))
-	(setq my/evil-last-search-candidate-overlay
-	      (make-overlay (point) (+ (point) last-searched-string-size)))
-	(overlay-put my/evil-last-search-candidate-overlay 'face 'isearch)))
-    (setq my/last-searched-string last-searched-string)))
-
-(advice-add
- 'evil-ex-start-search
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
-
-(advice-add
- 'evil-ex-search-next
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
-
-(advice-add
- 'evil-ex-search-previous
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
-
-(advice-add
- 'evil-ex-start-word-search
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
+(setq lazy-highlight-cleanup nil)
+(setq lazy-highlight-initial-delay 0)
+(setq lazy-highlight-buffer t)
 
 (setq delete-by-moving-to-trash t)
 (cond
@@ -290,13 +240,13 @@
 
 (defun my/keyboard-escape-quit-and-unhighlight ()
   (interactive)
-  (my/unhighlight-last-searched-string)
+  (lazy-highlight-cleanup t)
   (anzu--reset-mode-line)
   (keyboard-escape-quit))
 
 (defun my/keyboard-quit-and-unhighlight ()
   (interactive)
-  (my/unhighlight-last-searched-string)
+  (lazy-highlight-cleanup t)
   (anzu--reset-mode-line)
   (keyboard-quit))
 
@@ -405,15 +355,12 @@
 
 (use-package evil
   :init
-  (setq evil-search-module 'evil-search)
-  (setq evil-ex-search-persistent-highlight nil)
-  (setq evil-ex-search-highlight-all nil)
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-minibuffer t)
-  (setq evil-regexp-search t)
-  (setq evil-symbol-word-search t)
+  ;; (setq evil-regexp-search nil) ;; might be a problem
+  ;; (setq evil-symbol-word-search nil) ;; might be a problem
   :config
   (evil-mode 1)
 
