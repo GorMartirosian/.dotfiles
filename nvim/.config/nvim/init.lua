@@ -24,13 +24,18 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz')
 vim.pack.add({'https://github.com/folke/tokyonight.nvim'})
 vim.cmd('colorscheme tokyonight-night')
 
-vim.pack.add({'https://github.com/ibhagwan/fzf-lua'})
-require('fzf-lua').setup({})
+vim.pack.add({
+  'https://github.com/nvim-lua/plenary.nvim',
+  'https://github.com/nvim-telescope/telescope.nvim',
+})
 
-vim.keymap.set('n', '<leader>ff', require('fzf-lua').files)        -- find files
-vim.keymap.set('n', '<leader>fg', require('fzf-lua').live_grep)    -- live grep
-vim.keymap.set('n', '<leader>fb', require('fzf-lua').buffers)      -- buffers
-vim.keymap.set('n', '<leader>/', require('fzf-lua').grep_curbuf)   -- search current file
+require('telescope').setup({})
+
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 
 vim.pack.add({
     'https://github.com/nvim-tree/nvim-web-devicons',
@@ -99,15 +104,12 @@ vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#98c379' })
 vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#ffff00' })
 vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
--- vim.pack.add({
---     'https://github.com/nvim-lua/plenary.nvim',
---     'https://github.com/NeogitOrg/neogit'
--- })
--- require('neogit').setup()
--- vim.keymap.set('n', '<leader>g', ':Neogit<CR>')
-
-vim.pack.add({'https://github.com/tpope/vim-fugitive'})
-vim.keymap.set('n', '<leader>g', ':Git<CR>')
+vim.pack.add({
+    'https://github.com/nvim-lua/plenary.nvim',
+    'https://github.com/NeogitOrg/neogit'
+})
+require('neogit').setup()
+vim.keymap.set('n', '<leader>g', ':Neogit<CR>')
 
 vim.pack.add({'https://github.com/stevearc/oil.nvim'})
 require('oil').setup({
