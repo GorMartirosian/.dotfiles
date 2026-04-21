@@ -118,3 +118,20 @@ require('oil').setup({
     }
 })
 vim.keymap.set('n', '<leader>e', ':Oil<CR>')
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = 'oil://*',
+  callback = function()
+    require('oil.actions').cd.callback()
+  end,
+})
+
+vim.pack.add({'https://github.com/lukas-reineke/indent-blankline.nvim.git'})
+require('ibl').setup()
+
+vim.pack.add({ 
+    'https://github.com/rafamadriz/friendly-snippets.git',
+    'https://github.com/saghen/blink.cmp.git' 
+})
+
+require('blink.cmp').setup()
