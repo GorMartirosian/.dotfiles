@@ -134,4 +134,9 @@ vim.pack.add({
     'https://github.com/saghen/blink.cmp.git' 
 })
 
-require('blink.cmp').setup()
+require('blink.cmp').setup( {
+    keymap = {
+        preset = 'super-tab',
+        ['<CR>'] = { 'accept', 'fallback' },
+    },
+})
