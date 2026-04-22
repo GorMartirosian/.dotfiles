@@ -25,8 +25,8 @@ vim.pack.add({'https://github.com/folke/tokyonight.nvim'})
 vim.cmd('colorscheme tokyonight-night')
 
 vim.pack.add({
-  'https://github.com/nvim-lua/plenary.nvim',
-  'https://github.com/nvim-telescope/telescope.nvim',
+    'https://github.com/nvim-lua/plenary.nvim',
+    'https://github.com/nvim-telescope/telescope.nvim',
 })
 
 require('telescope').setup({})
@@ -128,10 +128,10 @@ require('oil').setup({
 vim.keymap.set('n', '<leader>e', ':Oil<CR>')
 
 vim.api.nvim_create_autocmd('BufEnter', {
-  pattern = 'oil://*',
-  callback = function()
-    require('oil.actions').cd.callback()
-  end,
+    pattern = 'oil://*',
+    callback = function()
+        require('oil.actions').cd.callback()
+    end,
 })
 
 vim.pack.add({'https://github.com/lukas-reineke/indent-blankline.nvim.git'})
