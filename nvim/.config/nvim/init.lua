@@ -37,6 +37,13 @@ vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live gr
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
 
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'qf',
+    callback = function()
+        vim.cmd('wincmd L')
+    end,
+})
+
 vim.pack.add({
     'https://github.com/nvim-tree/nvim-web-devicons',
     'https://github.com/nvim-lualine/lualine.nvim'
@@ -106,6 +113,7 @@ vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
 vim.pack.add({
     'https://github.com/nvim-lua/plenary.nvim',
+    'https://github.com/sindrets/diffview.nvim.git',
     'https://github.com/NeogitOrg/neogit'
 })
 require('neogit').setup()
