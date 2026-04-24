@@ -16,6 +16,11 @@ vim.opt.wrap = false           -- no line wrapping
 vim.opt.termguicolors = true   -- full color support
 vim.opt.autochdir = true
 vim.opt.cursorline = true
+vim.opt.foldmethod = 'expr'
+vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.opt.foldenable = false
+vim.opt.foldlevel = 99
+vim.opt.foldtext = ''
 
 -- keymaps
 vim.g.mapleader = ' '
@@ -91,6 +96,14 @@ vim.lsp.config('ts_ls', {
     cmd = { 'typescript-language-server', '--stdio' },
     filetypes = { 'javascript', 'typescript' },
     root_markers = { 'package.json', '.git' }
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+    callback = function()
+        vim.keymap.set('n', 'gd',  vim.lsp.buf.definition,  { buf = 0 })
+        vim.keymap.set('n', 'gr',  vim.lsp.buf.references,  { buf = 0 })
+        vim.keymap.set('n', 'grn', vim.lsp.buf.rename,      { buf = 0 })
+    end,
 })
 
 vim.diagnostic.config({
