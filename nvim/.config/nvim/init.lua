@@ -15,6 +15,7 @@ vim.opt.shiftwidth = 4
 vim.opt.wrap = false           -- no line wrapping
 vim.opt.termguicolors = true   -- full color support
 vim.opt.autochdir = true
+vim.opt.cursorline = true
 
 -- keymaps
 vim.g.mapleader = ' '
