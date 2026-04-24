@@ -119,6 +119,13 @@ vim.pack.add({
 require('neogit').setup()
 vim.keymap.set('n', '<leader>g', ':Neogit<CR>')
 
+vim.api.nvim_set_hl(0, 'NeogitHunkHeader',          { fg = '#a9b1d6', bg = '#3d4a7a', bold = true })
+vim.api.nvim_set_hl(0, 'NeogitHunkHeaderHighlight', { fg = '#c0caf5', bg = '#4a58a0', bold = true })
+vim.api.nvim_set_hl(0, 'NeogitDiffAdd',          { fg = '#a8d870', bg = '#264020' })
+vim.api.nvim_set_hl(0, 'NeogitDiffAddHighlight', { fg = '#a8cc6a', bg = '#2e4d25', bold = true })
+vim.api.nvim_set_hl(0, 'NeogitDiffDelete',          { fg = '#ff4f4f', bg = '#591a1a' })
+vim.api.nvim_set_hl(0, 'NeogitDiffDeleteHighlight', { fg = '#ff2020', bg = '#681c1c', bold = true })
+
 vim.pack.add({'https://github.com/stevearc/oil.nvim'})
 require('oil').setup({
     view_options = {
