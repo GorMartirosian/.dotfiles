@@ -169,3 +169,39 @@ require('blink.cmp').setup( {
         ['<CR>'] = { 'accept', 'fallback' },
     },
 })
+
+vim.pack.add({
+  'https://github.com/nvim-treesitter/nvim-treesitter-context'
+})
+
+require('treesitter-context').setup({
+    mode = 'cursor',
+    max_lines = 5,
+    trim_scope = 'inner',
+})
+
+vim.pack.add({
+    'https://github.com/mbbill/undotree'
+})
+vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
+
+vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', {
+    bg = '#591a1a'
+})
+
+vim.api.nvim_set_hl(0, 'DiffviewDiffDeleteDim', {
+    bg = '#681c1c'
+})
+
+vim.api.nvim_set_hl(0, 'DiffviewDiffChange', {
+    bg = '#1f3328'
+})
+
+vim.api.nvim_set_hl(0, 'DiffviewDiffAdd', {
+    bg = '#264020'
+})
+
+vim.api.nvim_set_hl(0, 'DiffviewDiffText', {
+    bg = '#2e4d25',
+    bold = true
+})
