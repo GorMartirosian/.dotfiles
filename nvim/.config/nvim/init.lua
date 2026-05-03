@@ -19,6 +19,8 @@ vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldenable = false
 vim.opt.foldlevel = 99
 vim.opt.foldtext = ''
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = 'number'
 
 -- keymaps
 vim.g.mapleader = ' '
