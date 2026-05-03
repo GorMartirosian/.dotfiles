@@ -14,7 +14,6 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.wrap = false           -- no line wrapping
 vim.opt.termguicolors = true   -- full color support
-vim.opt.autochdir = true
 vim.opt.cursorline = true
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
@@ -148,13 +147,6 @@ require('oil').setup({
 })
 vim.keymap.set('n', '<leader>e', ':Oil<CR>')
 
-vim.api.nvim_create_autocmd('BufEnter', {
-    pattern = 'oil://*',
-    callback = function()
-        require('oil.actions').cd.callback()
-    end,
-})
-
 vim.pack.add({'https://github.com/lukas-reineke/indent-blankline.nvim.git'})
 require('ibl').setup()
 
@@ -163,12 +155,35 @@ vim.pack.add({
     'https://github.com/saghen/blink.cmp.git' 
 })
 
-require('blink.cmp').setup( {
+require('blink.cmp').setup({
     keymap = {
         preset = 'super-tab',
         ['<CR>'] = { 'accept', 'fallback' },
     },
+
+    cmdline = {
+        keymap = { preset = 'inherit' },
+        completion = { 
+            menu = {  
+                auto_show = function()
+                    if vim.fn.getcmdtype() ~= ':' then
+                        return false
+                    end
+
+                    local cmd = vim.fn.getcmdline()
+
+                    if cmd == 'w' or cmd == 'q' or cmd == 'restart' then
+                        return false
+                    end
+
+                    return true
+                end         
+            },
+        },
+    },
 })
+
+vim.keymap.set('c', '<M-BS>', '<C-w>')
 
 vim.pack.add({
   'https://github.com/nvim-treesitter/nvim-treesitter-context'
