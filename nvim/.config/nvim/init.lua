@@ -148,7 +148,11 @@ require('oil').setup({
 vim.keymap.set('n', '<leader>e', ':Oil<CR>')
 
 vim.pack.add({'https://github.com/lukas-reineke/indent-blankline.nvim.git'})
-require('ibl').setup()
+require('ibl').setup({
+    scope = {
+        enabled = false,
+    },
+})
 
 vim.pack.add({ 
     'https://github.com/rafamadriz/friendly-snippets.git',
@@ -194,11 +198,6 @@ require('treesitter-context').setup({
     max_lines = 5,
     trim_scope = 'inner',
 })
-
-vim.pack.add({
-    'https://github.com/mbbill/undotree'
-})
-vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
 
 vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', {
     bg = '#591a1a'
