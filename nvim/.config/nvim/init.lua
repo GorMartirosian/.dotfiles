@@ -14,7 +14,6 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.wrap = false           -- no line wrapping
 vim.opt.termguicolors = true   -- full color support
-vim.opt.cursorline = true
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldenable = false
@@ -154,9 +153,9 @@ require('ibl').setup({
     },
 })
 
-vim.pack.add({ 
-    'https://github.com/rafamadriz/friendly-snippets.git',
-    'https://github.com/saghen/blink.cmp.git' 
+vim.pack.add({
+    "https://github.com/rafamadriz/friendly-snippets.git",
+    { src = "https://github.com/saghen/blink.cmp.git", version = vim.version.range("1.*") },
 })
 
 require('blink.cmp').setup({
