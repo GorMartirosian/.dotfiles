@@ -17,7 +17,7 @@ vim.opt.termguicolors = true   -- full color support
 vim.opt.foldmethod = 'expr'
 vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 vim.opt.foldenable = false
-vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
 vim.opt.foldtext = ''
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = 'number'
@@ -220,3 +220,8 @@ vim.api.nvim_set_hl(0, 'DiffviewDiffText', {
     bg = '#2e4d25',
     bold = true
 })
+
+if vim.g.neovide then
+    vim.g.neovide_cursor_animation_length = 0
+    vim.g.neovide_cursor_trail_size = 0
+end
