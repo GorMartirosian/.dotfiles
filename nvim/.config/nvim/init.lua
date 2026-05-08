@@ -168,21 +168,28 @@ require('blink.cmp').setup({
 
     cmdline = {
         keymap = { preset = 'inherit' },
-        completion = { 
-            menu = {  
+        completion = {
+            menu = {
                 auto_show = function()
                     if vim.fn.getcmdtype() ~= ':' then
                         return false
                     end
 
                     local cmd = vim.fn.getcmdline()
+                    local base_cmd = cmd:gsub("!$", "")
 
-                    if cmd == 'w' or cmd == 'q' or cmd == 'restart' then
-                        return false
-                    end
+                    local blocked_commands = {
+                        w = true,
+                        wa = true,
+                        q = true,
+                        qa = true,
+                        wq = true,
+                        wqa = true,
+                        restart = true,
+                    }
 
-                    return true
-                end         
+                    return not blocked_commands[base_cmd]
+                end,
             },
         },
     },
