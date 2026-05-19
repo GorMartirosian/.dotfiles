@@ -122,7 +122,7 @@ vim.pack.add({'https://github.com/lewis6991/gitsigns.nvim'})
 require('gitsigns').setup()
 
 vim.api.nvim_set_hl(0, 'GitSignsAdd', { fg = '#98c379' })
-vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#ffff00' })
+vim.api.nvim_set_hl(0, 'GitSignsChange', { fg = '#3794FF' })
 vim.api.nvim_set_hl(0, 'GitSignsDelete', { fg = '#ff0000' })
 
 vim.pack.add({
