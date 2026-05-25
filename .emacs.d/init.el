@@ -257,3 +257,11 @@
 (use-package apheleia
   :config
   (apheleia-global-mode +1))
+
+(add-hook 'emacs-startup-hook
+          #'(lambda ()
+              (setq gc-cons-threshold (* 32 1024 1024))
+              (message "Emacs loaded in %.2f seconds with %d garbage collections."
+                       (float-time
+			(time-subtract after-init-time before-init-time))
+                       gcs-done)))
