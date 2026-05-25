@@ -32,7 +32,6 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
@@ -51,12 +50,14 @@
   ;; Only useful commands for current buffer are shown in M-x
   (read-extended-command-predicate #'command-completion-default-include-p))
 
+(setq lazy-highlight-cleanup nil)
+
 ;; Font
 ;; Change needed on new machine. Install the necessary fonts.
 (set-face-attribute 'default nil
-		    :family "AdwaitaMono Nerd Font"
+		    :family "JetBrains Mono"
 		    :height 120
-		    :weight 'medium)
+		    :weight 'regular)
 
 (setq show-paren-delay 0) 
 
@@ -64,7 +65,6 @@
           #'(lambda ()
 	      (set-face-attribute 'font-lock-comment-face
 				  nil
-				  :family "DejaVuSansM Nerd Font"
 				  :slant 'italic
 				  :foreground "cyan4")
 	      (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
@@ -75,12 +75,6 @@
 	      (set-face-attribute 'show-paren-mismatch nil
 				  :box '(:line-width (-1 . -1) :color "red"))
 	      (hs-minor-mode 1)))
-
-(add-hook 'help-mode-hook
-          #'(lambda ()
-	      (face-remap-add-relative 'default
-				       :family "AdwaitaMono Nerd Font"
-				       :weight 'bold)))
 
 ;;Theme
 ;; Install icons using nerd-icons-install-fonts
@@ -145,7 +139,11 @@
   :custom
   (consult-mode 1)
   :config
-  (keymap-global-set "C-x b" #'consult-buffer))
+  (keymap-global-set "C-x b" #'consult-buffer)
+  (keymap-global-set "M-s d" #'consult-find)
+  (keymap-global-set "M-s c" #'consult-locate)
+  (keymap-global-set "M-s g" #'consult-ripgrep)
+  (keymap-global-set "M-s l" #'consult-line))
 
 (use-package embark
   :after vertico
@@ -184,13 +182,6 @@
 (keymap-global-set "<escape>" #'keyboard-escape-quit)
 (keymap-global-set "<mouse-3>" #'context-menu-open)
 
-(keymap-global-set "M-s d" #'consult-find)
-(keymap-global-set "M-s c" #'consult-locate)
-(keymap-global-set "M-s g" #'consult-ripgrep)
-(keymap-global-set "M-s l" #'consult-line)
-
-(use-package project)
-
 (use-package magit
   :config
   (setq ediff-split-window-function 'split-window-horizontally)
@@ -220,6 +211,10 @@
   :commands (sly sly-connect)
   :init
   (setq inferior-lisp-program "sbcl"))
+
+(setq scroll-margin 4)
+(setq scroll-conservatively 101)
+(setq scroll-preserve-screen-position t)
 
 (setq-default truncate-lines t)
 (setq truncate-partial-width-windows nil)
