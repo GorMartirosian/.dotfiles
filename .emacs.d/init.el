@@ -4,21 +4,7 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
-;; Add this line, if init.el is separated into different files
-;;(add-to-list 'load-path '"~/.emacs.d/modules")
-
-(setopt auto-save-interval 20)
-(setopt auto-save-visited-mode t)
-(setopt auto-save-visited-interval 2) 
-
 (fset 'yes-or-no-p 'y-or-n-p)
-
-(defvar my/is-linux-system (eq system-type 'gnu/linux))
-(defvar my/is-windows-system (eq system-type 'windows-nt))
-(defvar my/is-macos-system (eq system-type 'darwin))
-
-(when my/is-windows-system
-  (setq find-program "C:/cygwin64/bin/find.exe"))
 
 (setq inhibit-startup-message t)
 
@@ -32,67 +18,7 @@
 (set-fringe-mode '(5 . 12)) ; Give some breathing room
 (menu-bar-mode -1)          ; Disable the menu bar
 
-(setq search-nonincremental-instead nil)
-
-(defvar-local my/last-searched-string nil)
-
-(defvar-local my/evil-last-search-candidate-overlay nil)
-
-(defun my/unhighlight-last-searched-string ()
-  (interactive)
-  (unhighlight-regexp my/last-searched-string)
-  (when (overlayp my/evil-last-search-candidate-overlay)
-    (delete-overlay my/evil-last-search-candidate-overlay)))
-
-(defface my/search-hl-face
-  '((t :inherit lazy-highlight))
-  "Face for my persistent search highlight.")
-
-(defun my/highlight-new-search ()
-  (let ((last-searched-string (car evil-ex-search-history)))
-    (highlight-regexp last-searched-string 'my/search-hl-face)
-    (when (looking-at last-searched-string)
-      (let ((last-searched-string-size
-	     (length (my/evil-strip-boundaries last-searched-string))))
-	(setq my/evil-last-search-candidate-overlay
-	      (make-overlay (point) (+ (point) last-searched-string-size)))
-	(overlay-put my/evil-last-search-candidate-overlay 'face 'isearch)))
-    (setq my/last-searched-string last-searched-string)))
-
-(advice-add
- 'evil-ex-start-search
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
-
-(advice-add
- 'evil-ex-search-next
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
-
-(advice-add
- 'evil-ex-search-previous
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
-
-(advice-add
- 'evil-ex-start-word-search
- :after
- #'(lambda (&rest _args)
-     (my/unhighlight-last-searched-string)
-     (my/highlight-new-search)))
-
 (setq delete-by-moving-to-trash t)
-(cond
- (my/is-macos-system
-  (setq trash-directory "~/.Trash"))
- (my/is-windows-system
-  (setq trashcan-dirname (expand-file-name "~/Recycle Bin"))))
 
 ;; Initialize package sources
 (require 'package)
@@ -168,18 +94,9 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 10))
-  :config
-  (setq doom-modeline-buffer-file-name-style 'truncate-nil))
-
 (use-package anzu
   :config
   (global-anzu-mode 1))
-
-(use-package evil-anzu
-  :after (evil anzu))
 
 ;;Change Emacs backup file location
 (setq backup-directory-alist
@@ -190,11 +107,6 @@
 
 (setq auto-save-file-name-transforms
       '((".*" "~/.emacs.d/autosave/" t)))
-
-(use-package vlf
-  :config
-  (require 'vlf-setup)
-  (setopt vlf-application 'dont-ask))
 
 (use-package which-key
   :diminish which-key-mode
@@ -208,7 +120,7 @@
 
 (use-package vertico
   :custom
-  (vertico-count 10)    ; Display at most this many matches
+  (vertico-count 10)
   (vertico-mode 1))
 
 (use-package savehist
@@ -228,16 +140,6 @@
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
 
-(use-package marginalia
-  :custom
-  (marginalia-mode 1))
-
-(use-package nerd-icons-completion
-  :after marginalia
-  :config
-  (nerd-icons-completion-mode)
-  (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
-
 (use-package consult
   :after recentf
   :custom
@@ -248,7 +150,6 @@
 (use-package embark
   :after vertico
   :config
-  (keymap-global-set "C-;" #'embark-act)
   (setq grep-use-headings t)
   (keymap-set vertico-map "C-." #'embark-export))
 
@@ -263,7 +164,7 @@
             (face-remap-add-relative 'default :height 0.9)
             (face-remap-add-relative 'grep-heading :height 1.1 :weight 'bold)
 
-	    (keymap-set evil-normal-state-local-map "d" #'my/hide-line)))
+	    (keymap-set grep-mode-map "C-k" #'my/hide-line)))
 
 (use-package embark-consult
   :after (embark consult))
@@ -276,163 +177,17 @@
   (keymap-global-set "C-h k" #'helpful-key)
   (keymap-global-set "C-h x" #'helpful-command))
 
-(defun my/evil-scroll-down-and-center ()
-  "Scroll down and center the cursor."
-  (interactive)
-  (evil-scroll-down nil)
-  (recenter))
-
-(defun my/evil-scroll-up-and-center ()
-  "Scroll up and center the cursor."
-  (interactive)
-  (evil-scroll-up nil)
-  (recenter))
-
-(defun my/keyboard-escape-quit-and-unhighlight ()
-  (interactive)
-  (my/unhighlight-last-searched-string)
-  (anzu--reset-mode-line)
-  (keyboard-escape-quit))
-
-(defun my/keyboard-quit-and-unhighlight ()
-  (interactive)
-  (my/unhighlight-last-searched-string)
-  (anzu--reset-mode-line)
-  (keyboard-quit))
-
 (add-hook 'occur-mode-hook
 	  #'(lambda ()
-	      (keymap-set evil-normal-state-local-map "d" #'my/hide-line)))
+	      (keymap-set occur-mode-map "C-k" #'my/hide-line)))
 
-(defun my/evil-strip-boundaries (s)
-  "Remove Emacs symbol-boundary tokens \\_< and \\_> from S."
-  (when (stringp s)
-    (setq s (string-replace "\\_<" "" s))
-    (setq s (string-replace "\\_>" "" s))
-    s))
+(keymap-global-set "<escape>" #'keyboard-escape-quit)
+(keymap-global-set "<mouse-3>" #'context-menu-open)
 
-(defun my/isearch-occur-and-jump-to-window ()
-  (interactive)
-  (let* ((raw (car evil-ex-search-history))
-         (pattern (my/evil-strip-boundaries raw)))
-    (unless (and pattern (not (string-empty-p pattern)))
-      (user-error "No Evil search pattern in evil-ex-search-history"))
-    (isearch-occur pattern)
-    (other-window 1)))
-
-(defun my/isearch-occur-and-jump-to-window-from-evil-search ()
-  (interactive)
-  (let* ((raw (minibuffer-contents-no-properties))
-         (pattern (my/evil-strip-boundaries raw)))
-    (unless (and pattern (not (string-empty-p pattern)))
-      (user-error "No Evil search pattern"))
-    (run-at-time
-     0 nil
-     (lambda ()
-       (isearch-occur pattern)
-       (other-window 1)))
-    (exit-minibuffer)))
-
-(defun my/setup-minibuffer-keys ()
-  (cond
-   ((memq this-command '(consult-ripgrep consult-find consult-line))
-    (keymap-set evil-normal-state-local-map "C-n" #'next-history-element)
-    (keymap-set evil-normal-state-local-map "C-p" #'previous-history-element)
-    (keymap-set evil-insert-state-local-map "C-n" #'vertico-next)
-    (keymap-set evil-insert-state-local-map "C-p" #'vertico-previous)
-    (keymap-set evil-insert-state-local-map "C-." #'embark-export)
-    (keymap-set evil-normal-state-local-map "C-." #'embark-export))
-
-   ((eq this-command 'eval-expression)
-    (keymap-set evil-normal-state-local-map "C-n" #'next-line-or-history-element)
-    (keymap-set evil-normal-state-local-map "C-p" #'previous-line-or-history-element)
-    (keymap-set evil-insert-state-local-map "C-n" #'corfu-next)
-    (keymap-set evil-insert-state-local-map "C-p" #'corfu-previous))
-
-   (t
-    (when (eq this-command 'evil-ex-search-forward)
-      (keymap-set evil-normal-state-local-map "C-." #'my/isearch-occur-and-jump-to-window-from-evil-search)
-      (keymap-set evil-insert-state-local-map "C-." #'my/isearch-occur-and-jump-to-window-from-evil-search))
-    (keymap-set evil-normal-state-local-map "C-n" #'next-line-or-history-element)
-    (keymap-set evil-normal-state-local-map "C-p" #'previous-line-or-history-element)
-    (keymap-set evil-insert-state-local-map "C-n" #'next-line-or-history-element)
-    (keymap-set evil-insert-state-local-map "C-p" #'previous-line-or-history-element))))
-
-(defun my/unset-minibuffer-keys (&rest _)
-  (keymap-unset evil-insert-state-local-map "C-." t)
-  (keymap-unset evil-normal-state-local-map "C-." t)
-  (keymap-unset evil-insert-state-local-map "C-p" t)
-  (keymap-unset evil-normal-state-local-map "C-p" t)
-  (keymap-unset evil-insert-state-local-map "C-n" t)
-  (keymap-unset evil-normal-state-local-map "C-n" t))
-
-(defun my/set-additional-keybindings ()
-  ;; Use visual line motions even outside of visual-line-mode buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-  (keymap-global-set "<escape>" #'keyboard-escape-quit)
-  (keymap-global-set "<mouse-3>" #'context-menu-open)
-
-  (keymap-set evil-normal-state-map "<escape>" #'my/keyboard-escape-quit-and-unhighlight)
-
-  (keymap-global-set "C-g" #'my/keyboard-quit-and-unhighlight)
-
-  (keymap-set evil-normal-state-map "C-d" #'my/evil-scroll-down-and-center)
-  (keymap-set evil-normal-state-map "C-u" #'my/evil-scroll-up-and-center)
-
-  (keymap-set evil-insert-state-map "C-w" evil-window-map)
-
-  (keymap-set evil-insert-state-map "C-g" #'evil-normal-state)
-
-  (keymap-set evil-normal-state-map "C-." #'my/isearch-occur-and-jump-to-window)
-
-  (with-eval-after-load 'consult
-
-    (defvar my/extended-global-keymap
-      (let ((map (make-sparse-keymap)))
-	(keymap-set map "C-S-f" #'consult-ripgrep)
-	(keymap-set map "C-f" #'consult-line)
-	(keymap-set map "C-S-p" #'consult-find)
-	map))
-
-    (add-to-list 'emulation-mode-map-alists `((t . ,my/extended-global-keymap))))
-
-  (with-eval-after-load 'vertico
-    (add-hook 'minibuffer-setup-hook #'my/setup-minibuffer-keys))
-
-  (advice-add 'abort-minibuffers :before #'my/unset-minibuffer-keys))
-
-(use-package evil
-  :init
-  (setq evil-search-module 'evil-search)
-  (setq evil-ex-search-persistent-highlight nil)
-  (setq evil-ex-search-highlight-all nil)
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-minibuffer t)
-  (setq evil-regexp-search t)
-  (setq evil-symbol-word-search t)
-  :config
-  (evil-mode 1)
-
-  (advice-add 'evil-search-next
-	      :after
-	      #'(lambda (&rest x)
-		  (evil-scroll-line-to-center (line-number-at-pos))))
-
-  (advice-add 'evil-search-previous
-	      :after
-	      #'(lambda (&rest x)
-		  (evil-scroll-line-to-center (line-number-at-pos))))
-
-  (my/set-additional-keybindings))
-
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
+(keymap-global-set "M-s d" #'consult-find)
+(keymap-global-set "M-s c" #'consult-locate)
+(keymap-global-set "M-s g" #'consult-ripgrep)
+(keymap-global-set "M-s l" #'consult-line)
 
 (use-package project)
 
@@ -444,18 +199,6 @@
 (use-package diff-hl
   :config
   (global-diff-hl-mode))
-
-(defun my/disable-auto-save ()
-  (setq-local auto-save-visited-mode nil))
-
-(add-hook 'makefile-mode-hook #'my/disable-auto-save)
-(add-hook 'vlf-mode-hook #'my/disable-auto-save)
-
-(defun my/disable-auto-save-on-tramp ()
-  (when (file-remote-p default-directory)
-    (my/disable-auto-save)))
-
-(add-hook 'find-file-hook #'my/disable-auto-save-on-tramp)
 
 (use-package corfu
   :custom
@@ -473,23 +216,10 @@
   (corfu-history-mode 1)
   (corfu-popupinfo-mode 1))
 
-(use-package evil-nerd-commenter
-  :bind ("C-/" . evilnc-comment-or-uncomment-lines))
-
-(defun my/set-sly-repl-mode-keybindings ()
-  (evil-define-key 'normal sly-mrepl-mode-map
-    (kbd "C-n") 'sly-mrepl-next-input-or-button
-    (kbd "C-p") 'sly-mrepl-previous-input-or-button)
-  (evil-define-key 'insert sly-mrepl-mode-map
-    (kbd "C-n") 'sly-mrepl-next-input-or-button
-    (kbd "C-p") 'sly-mrepl-previous-input-or-button))
-
 (use-package sly
   :commands (sly sly-connect)
   :init
-  (setq inferior-lisp-program "sbcl")
-  :config
-  (my/set-sly-repl-mode-keybindings))
+  (setq inferior-lisp-program "sbcl"))
 
 (setq-default truncate-lines t)
 (setq truncate-partial-width-windows nil)
@@ -501,29 +231,6 @@
 
 (setq hscroll-step 7)
 (setq hscroll-margin 3)
-
-(use-package ultra-scroll
-  :init
-  (setq scroll-conservatively 101 ; important!
-        scroll-margin 0)
-  :config
-  (ultra-scroll-mode 1))
-
-(use-package dashboard
-  :init
-  (setq dashboard-startup-banner 'logo)
-  (setq dashboard-center-content t)
-  (setq dashboard-vertically-center-content t)
-  (setq dashboard-startupify-list (list #'dashboard-insert-banner
-					#'dashboard-insert-newline
-					#'dashboard-insert-banner-title
-					#'dashboard-insert-newline
-					#'dashboard-insert-init-info
-					#'dashboard-insert-items
-					#'dashboard-insert-newline))
-
-  :config
-  (dashboard-setup-startup-hook))
 
 (use-package nerd-icons-dired
   :hook
@@ -554,26 +261,4 @@
 
 (use-package apheleia
   :config
-  (apheleia-global-mode +1)
-  (setf (alist-get 'prettier-javascript apheleia-formatters)
-	'("apheleia-npx" "prettier" "--stdin-filepath" filepath))
-  (setf (alist-get 'prettier-html apheleia-formatters)
-	'("apheleia-npx" "prettier" "--stdin-filepath" filepath)))
-
-(use-package treemacs
-  :config
-  (treemacs-git-mode 'deferred)
-  (treemacs-indent-guide-mode t)
-  (treemacs-follow-mode t)
-  (treemacs-filewatch-mode t)
-  (treemacs-fringe-indicator-mode 'always))
-
-(use-package treemacs-evil
-  :after (treemacs evil))
-
-(use-package treemacs-magit
-  :after (treemacs magit))
-
-(use-package treemacs-nerd-icons
-  :config
-  (treemacs-load-theme "nerd-icons"))
+  (apheleia-global-mode +1))
