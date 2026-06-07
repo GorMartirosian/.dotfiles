@@ -88,9 +88,7 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
-(use-package anzu
-  :config
-  (global-anzu-mode 1))
+(setq isearch-lazy-count t)
 
 ;;Change Emacs backup file location
 (setq backup-directory-alist
