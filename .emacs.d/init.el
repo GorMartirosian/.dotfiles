@@ -205,8 +205,8 @@
   (corfu-history-mode 1)
   (corfu-popupinfo-mode 1))
 
-(use-package sly
-  :commands (sly sly-connect)
+(use-package slime
+  :commands (slime slime-connect)
   :init
   (setq inferior-lisp-program "sbcl"))
 
