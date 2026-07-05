@@ -4,6 +4,14 @@
 (when (file-exists-p custom-file)
   (load custom-file))
 
+(add-hook 'emacs-startup-hook
+          #'(lambda ()
+              (setq gc-cons-threshold (* 32 1024 1024))
+              (message "Emacs loaded in %.2f seconds with %d garbage collections."
+                       (float-time
+			(time-subtract after-init-time before-init-time))
+                       gcs-done)))
+
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (setq inhibit-startup-message t)
@@ -149,18 +157,24 @@
   (setq grep-use-headings t)
   (keymap-set vertico-map "C-." #'embark-export))
 
-(defun my/hide-line ()
+(defun my/grep-hide-line ()
   (interactive)
   (let ((inhibit-read-only t))
     (kill-whole-line)
     (delete-blank-lines)))
 
-(add-hook 'grep-mode-hook
-          (lambda ()
-            (face-remap-add-relative 'default :height 0.9)
-            (face-remap-add-relative 'grep-heading :height 1.1 :weight 'bold)
+(with-eval-after-load 'grep
+  (set-face-attribute 'grep-heading nil
+                      :foreground "#b8b8b8"
+                      :background "#2f2f2f"
+                      :height 1.1
+                      :weight 'bold)
 
-	    (keymap-set grep-mode-map "C-k" #'my/hide-line)))
+  (keymap-set grep-mode-map "C-k" #'my/grep-hide-line)
+
+  (add-hook 'grep-mode-hook
+            (lambda ()
+              (face-remap-add-relative 'default :height 0.9))))
 
 (use-package embark-consult
   :after (embark consult))
@@ -175,7 +189,7 @@
 
 (add-hook 'occur-mode-hook
 	  #'(lambda ()
-	      (keymap-set occur-mode-map "C-k" #'my/hide-line)))
+	      (keymap-set occur-mode-map "C-k" #'my/grep-hide-line)))
 
 (keymap-global-set "<escape>" #'keyboard-escape-quit)
 (keymap-global-set "<mouse-3>" #'context-menu-open)
@@ -256,10 +270,7 @@
   :config
   (apheleia-global-mode +1))
 
-(add-hook 'emacs-startup-hook
-          #'(lambda ()
-              (setq gc-cons-threshold (* 32 1024 1024))
-              (message "Emacs loaded in %.2f seconds with %d garbage collections."
-                       (float-time
-			(time-subtract after-init-time before-init-time))
-                       gcs-done)))
+(use-package markdown-mode
+  :mode "\\.md\\'")
+
+(use-package csv-mode)
