@@ -240,8 +240,8 @@
 (setq hscroll-margin 3)
 
 (use-package nerd-icons-dired
-  :hook
-  (dired-mode . nerd-icons-dired-mode))
+  :config
+  (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
 
 ;; Install grammars using treesit-auto-install-all
 (use-package treesit-auto
