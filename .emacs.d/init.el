@@ -50,15 +50,20 @@
 (use-package emacs
   :custom
   (enable-recursive-minibuffers t)
-  (minibuffer-depth-indicate-mode 1)
 
   (tab-always-indent 'complete)
   (completion-cycle-threshold 3)
 
   ;; Only useful commands for current buffer are shown in M-x
-  (read-extended-command-predicate #'command-completion-default-include-p))
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  :init
+  (minibuffer-depth-indicate-mode 1))
 
 (setq lazy-highlight-cleanup nil)
+(delete-selection-mode 1)
+(global-auto-revert-mode 1)
+(repeat-mode 1)
+(winner-mode 1)
 
 ;; Font
 ;; Change needed on new machine. Install the necessary fonts.
@@ -121,7 +126,8 @@
 (use-package vertico
   :custom
   (vertico-count 10)
-  (vertico-mode 1))
+  :init
+  (vertico-mode))
 
 (use-package savehist
   :init
@@ -142,8 +148,6 @@
 
 (use-package consult
   :after recentf
-  :custom
-  (consult-mode 1)
   :config
   (keymap-global-set "C-x b" #'consult-buffer)
   (keymap-global-set "M-s d" #'consult-find)
