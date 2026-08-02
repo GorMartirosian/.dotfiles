@@ -89,6 +89,9 @@
 				  :box '(:line-width (-1 . -1) :color "red"))
 	      (hs-minor-mode 1)))
 
+(set-face-attribute 'completions-annotations nil
+                    :foreground "#b0b0b0")
+
 ;;Theme
 ;; Install icons using nerd-icons-install-fonts
 (use-package doom-themes
