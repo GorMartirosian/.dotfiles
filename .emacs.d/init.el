@@ -156,7 +156,9 @@
   (keymap-global-set "M-s d" #'consult-find)
   (keymap-global-set "M-s c" #'consult-locate)
   (keymap-global-set "M-s g" #'consult-ripgrep)
-  (keymap-global-set "M-s l" #'consult-line))
+  (keymap-global-set "M-s l" #'consult-line)
+  (setq consult-ripgrep-args
+        (concat consult-ripgrep-args " --fixed-strings")))
 
 (use-package embark
   :after vertico
