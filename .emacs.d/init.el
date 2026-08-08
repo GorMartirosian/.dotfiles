@@ -59,7 +59,6 @@
   :init
   (minibuffer-depth-indicate-mode 1))
 
-(setq lazy-highlight-cleanup nil)
 (delete-selection-mode 1)
 (global-auto-revert-mode 1)
 (repeat-mode 1)
@@ -105,6 +104,8 @@
   (doom-themes-org-config))
 
 (setq isearch-lazy-count t)
+(setq lazy-highlight-buffer t)
+(setq lazy-highlight-cleanup nil)
 
 ;;Change Emacs backup file location
 (setq backup-directory-alist
