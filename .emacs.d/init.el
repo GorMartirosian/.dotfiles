@@ -284,3 +284,6 @@
   :mode "\\.md\\'")
 
 (use-package csv-mode)
+
+(use-package yaml-ts-mode
+  :mode ("\\.ya?ml\\'" . yaml-ts-mode))
