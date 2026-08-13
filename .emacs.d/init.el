@@ -23,7 +23,6 @@
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
 (tooltip-mode -1)           ; Disable tooltips
-(set-fringe-mode '(5 . 12)) ; Give some breathing room
 (menu-bar-mode -1)          ; Disable the menu bar
 
 (setq delete-by-moving-to-trash t)
