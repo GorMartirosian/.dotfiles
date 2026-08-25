@@ -254,8 +254,11 @@
 
 ;; Install grammars using treesit-auto-install-all
 (use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
   :config
-  (global-treesit-auto-mode))
+  (global-treesit-auto-mode)
+  (treesit-auto-add-to-auto-mode-alist))
 
 (use-package rainbow-delimiters
   :config
@@ -270,6 +273,7 @@
 		       c++-ts-mode-hook
 		       python-ts-mode-hook
 		       js-ts-mode-hook
+                       typescript-ts-base-mode-hook
 		       css-ts-mode-hook
 		       html-ts-mode-hook
 		       json-ts-mode-hook))
