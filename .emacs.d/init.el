@@ -248,6 +248,9 @@
 (setq hscroll-step 7)
 (setq hscroll-margin 3)
 
+(add-hook 'dired-mode-hook #'dired-hide-details-mode)
+(setq dired-kill-when-opening-new-dired-buffer t)
+
 (use-package nerd-icons-dired
   :config
   (add-hook 'dired-mode-hook #'nerd-icons-dired-mode))
