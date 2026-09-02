@@ -250,6 +250,7 @@
 
 (add-hook 'dired-mode-hook #'dired-hide-details-mode)
 (setq dired-kill-when-opening-new-dired-buffer t)
+(setq dired-free-space nil)
 
 (use-package nerd-icons-dired
   :config
