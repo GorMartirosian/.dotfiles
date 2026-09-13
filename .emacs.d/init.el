@@ -294,3 +294,13 @@
 
 (use-package yaml-ts-mode
   :mode ("\\.ya?ml\\'" . yaml-ts-mode))
+
+(defun my/recenter (&rest _)
+  (recenter))
+
+(with-eval-after-load 'xref
+  ;; (advice-add #'xref-find-definitions :after #'my/recenter)
+  (advice-add #'xref-go-back :after #'my/recenter))
+
+(with-eval-after-load 'isearch
+  (advice-add #'isearch-repeat-forward :after #'my/recenter))
