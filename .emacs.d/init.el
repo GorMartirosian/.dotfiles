@@ -304,3 +304,23 @@
 
 (with-eval-after-load 'isearch
   (advice-add #'isearch-repeat-forward :after #'my/recenter))
+
+(use-package indent-bars
+  :config
+  (setq
+   indent-bars-color '(highlight :face-bg t :blend 0.2)
+   indent-bars-pattern "."
+   indent-bars-width-frac 0.1
+   indent-bars-pad-frac 0.1
+   indent-bars-zigzag nil
+   indent-bars-highlight-current-depth nil)
+  (dolist (mode-hook '(c-ts-mode-hook
+                       c++-ts-mode-hook
+                       python-ts-mode-hook
+                       js-ts-mode-hook
+                       typescript-ts-base-mode-hook
+                       css-ts-mode-hook
+                       html-ts-mode-hook
+                       json-ts-mode-hook
+                       yaml-ts-mode-hook))
+    (add-hook mode-hook #'indent-bars-mode)))
