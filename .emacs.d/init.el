@@ -12,8 +12,6 @@
 			(time-subtract after-init-time before-init-time))
                        gcs-done)))
 
-(fset 'yes-or-no-p 'y-or-n-p)
-
 (setq inhibit-startup-message t)
 
 (setq initial-frame-alist
@@ -63,32 +61,7 @@
 (repeat-mode 1)
 (winner-mode 1)
 
-;; Font
-;; Change needed on new machine. Install the necessary fonts.
-(set-face-attribute 'default nil
-		    :family "JetBrains Mono"
-		    :height 120
-		    :weight 'regular)
-
-(setq show-paren-delay 0) 
-
-(add-hook 'prog-mode-hook
-          #'(lambda ()
-	      (set-face-attribute 'font-lock-comment-face
-				  nil
-				  :slant 'italic
-				  :foreground "cyan4")
-	      (set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
-	      (set-face-attribute 'font-lock-type-face nil :weight 'bold)
-	      (let ((fg (face-foreground 'default nil 'default)))
-		(set-face-attribute 'show-paren-match nil
-				    :box `(:line-width (-1 . -1) :color ,fg)))
-	      (set-face-attribute 'show-paren-mismatch nil
-				  :box '(:line-width (-1 . -1) :color "red"))
-	      (hs-minor-mode 1)))
-
-(set-face-attribute 'completions-annotations nil
-                    :foreground "#b0b0b0")
+(add-hook 'prog-mode-hook #'hs-minor-mode)
 
 ;;Theme
 ;; Install icons using nerd-icons-install-fonts
@@ -101,6 +74,33 @@
   (doom-themes-visual-bell-config)
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
+
+;; Font
+;; Change needed on new machine. Install the necessary fonts.
+(set-face-attribute 'default nil
+		    :family "JetBrains Mono"
+		    :height 120
+		    :weight 'regular)
+
+(setq show-paren-delay 0)
+
+(set-face-attribute 'font-lock-comment-face nil
+                    :slant 'italic
+                    :foreground "cyan4")
+
+(set-face-attribute 'font-lock-keyword-face nil :weight 'bold)
+
+(set-face-attribute 'font-lock-type-face nil :weight 'bold)
+
+(let ((fg (face-foreground 'default nil 'default)))
+  (set-face-attribute 'show-paren-match nil
+		      :box `(:line-width (-1 . -1) :color ,fg)))
+
+(set-face-attribute 'show-paren-mismatch nil
+                    :box '(:line-width (-1 . -1) :color "red"))
+
+(set-face-attribute 'completions-annotations nil
+                    :foreground "#b0b0b0")
 
 (setq isearch-lazy-count t)
 (setq lazy-highlight-buffer t)
@@ -154,11 +154,12 @@
   :config
   (keymap-global-set "C-x b" #'consult-buffer)
   (keymap-global-set "M-s d" #'consult-find)
-  (keymap-global-set "M-s c" #'consult-locate)
   (keymap-global-set "M-s g" #'consult-ripgrep)
   (keymap-global-set "M-s l" #'consult-line)
   (setq consult-ripgrep-args
-        (concat consult-ripgrep-args " --fixed-strings")))
+        (concat consult-ripgrep-args " --fixed-strings"))
+  (setq xref-show-xrefs-function #'consult-xref
+	xref-show-definitions-function #'consult-xref))
 
 (use-package embark
   :after vertico
@@ -263,6 +264,8 @@
   :config
   (global-treesit-auto-mode)
   (treesit-auto-add-to-auto-mode-alist))
+
+(setopt c-ts-mode-indent-offset 4)
 
 (use-package rainbow-delimiters
   :config
