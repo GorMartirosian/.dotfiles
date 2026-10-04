@@ -102,6 +102,14 @@
 (set-face-attribute 'completions-annotations nil
                     :foreground "#b0b0b0")
 
+(defun my/add-todo-font-lock ()
+  (font-lock-add-keywords
+   nil
+   '(("\\<TODO"
+      0 'font-lock-warning-face prepend))))
+
+(add-hook 'prog-mode-hook #'my/add-todo-font-lock)
+
 (setq isearch-lazy-count t)
 (setq lazy-highlight-buffer t)
 (setq lazy-highlight-cleanup nil)
@@ -263,7 +271,8 @@
   (treesit-auto-install 'prompt)
   :config
   (global-treesit-auto-mode)
-  (treesit-auto-add-to-auto-mode-alist))
+  (treesit-auto-add-to-auto-mode-alist)
+  (setq treesit-font-lock-level 4))
 
 (setopt c-ts-mode-indent-offset 4)
 
