@@ -1,3 +1,3 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq gc-cons-threshold most-positive-fixnum)
+(setopt gc-cons-threshold most-positive-fixnum)

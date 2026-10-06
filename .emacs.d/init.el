@@ -1,36 +1,36 @@
 ;;; -*- lexical-binding: t; -*-
 
-(setq custom-file (concat user-emacs-directory "custom.el"))
+(setopt custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
 
 (add-hook 'emacs-startup-hook
           #'(lambda ()
-              (setq gc-cons-threshold (* 32 1024 1024))
+              (setopt gc-cons-threshold (* 32 1024 1024))
               (message "Emacs loaded in %.2f seconds with %d garbage collections."
                        (float-time
 			(time-subtract after-init-time before-init-time))
                        gcs-done)))
 
-(setq inhibit-startup-message t)
+(setopt inhibit-startup-screen t)
 
-(setq initial-frame-alist
-      '((fullscreen . maximized)
-	(undecorated . t)))
+(setopt initial-frame-alist
+	'((fullscreen . maximized)
+	  (undecorated . t)))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
 (tooltip-mode -1)           ; Disable tooltips
 (menu-bar-mode -1)          ; Disable the menu bar
 
-(setq delete-by-moving-to-trash t)
+(setopt delete-by-moving-to-trash t)
 
 ;; Initialize package sources
 (require 'package)
 
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+(setopt package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (package-initialize)
 
@@ -42,7 +42,7 @@
 
 (require 'use-package)
 
-(setq use-package-always-ensure t)
+(setopt use-package-always-ensure t)
 
 (use-package emacs
   :custom
@@ -65,8 +65,8 @@
 ;; Install icons using nerd-icons-install-fonts
 (use-package doom-themes
   :config
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (setopt doom-themes-enable-bold t    ; if nil, bold is universally disabled
+          doom-themes-enable-italic t) ; if nil, italics is universally disabled
   (load-theme 'doom-molokai t)
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
@@ -80,7 +80,7 @@
 		    :height 120
 		    :weight 'regular)
 
-(setq show-paren-delay 0)
+(setopt show-paren-delay 0)
 
 (set-face-attribute 'font-lock-comment-face nil
                     :slant 'italic
@@ -108,25 +108,24 @@
 
 (add-hook 'prog-mode-hook #'my/add-todo-font-lock)
 
-(setq isearch-lazy-count t)
-(setq lazy-highlight-buffer t)
-(setq lazy-highlight-cleanup nil)
+(setopt isearch-lazy-count t)
+(setopt lazy-highlight-buffer t)
+(setopt lazy-highlight-cleanup nil)
 
 ;;Change Emacs backup file location
-(setq backup-directory-alist
-      `(("." . ,(concat user-emacs-directory "backups"))))
+(setopt backup-directory-alist
+	`(("." . ,(concat user-emacs-directory "backups"))))
 
 ;;Change Emacs auto-save file location
-(setq auto-save-list-file-prefix "~/.emacs.d/autosave/")
+(setopt auto-save-list-file-prefix "~/.emacs.d/autosave/")
 
-(setq auto-save-file-name-transforms
-      '((".*" "~/.emacs.d/autosave/" t)))
+(setopt auto-save-file-name-transforms
+	'((".*" "~/.emacs.d/autosave/" t)))
 
 (use-package which-key
   :diminish which-key-mode
   :config
-  (which-key-mode 1)
-  (setq which-key-idle-delay 1))
+  (which-key-mode 1))
 
 (column-number-mode)
 (setq-default display-line-numbers-type 'relative)
@@ -148,9 +147,9 @@
 
 (use-package orderless
   :config
-  (setq read-file-name-completion-ignore-case t
-	read-buffer-completion-ignore-case t
-	completion-ignore-case t)
+  (setopt read-file-name-completion-ignore-case t
+	  read-buffer-completion-ignore-case t)
+  (setq completion-ignore-case t)
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
@@ -162,10 +161,10 @@
   (keymap-global-set "M-s d" #'consult-find)
   (keymap-global-set "M-s g" #'consult-ripgrep)
   (keymap-global-set "M-s l" #'consult-line)
-  (setq consult-ripgrep-args
-        (concat consult-ripgrep-args " --fixed-strings"))
-  (setq xref-show-xrefs-function #'consult-xref
-	xref-show-definitions-function #'consult-xref))
+  (setopt consult-ripgrep-args
+          (concat consult-ripgrep-args " --fixed-strings"))
+  (setopt xref-show-xrefs-function #'consult-xref
+	  xref-show-definitions-function #'consult-xref))
 
 (use-package embark
   :after vertico
@@ -240,24 +239,24 @@
   :init
   (setq inferior-lisp-program "sbcl"))
 
-(setq scroll-margin 4)
-(setq scroll-conservatively 101)
-(setq scroll-preserve-screen-position t)
+(setopt scroll-margin 4)
+(setopt scroll-conservatively 101)
+(setopt scroll-preserve-screen-position t)
 
 (setq-default truncate-lines t)
-(setq truncate-partial-width-windows nil)
-(setq auto-hscroll-mode t)
-(setq mouse-wheel-tilt-scroll t)
-(setq mouse-wheel-progressive-speed nil)
+(setopt truncate-partial-width-windows nil)
+(setopt auto-hscroll-mode t)
+(setopt mouse-wheel-tilt-scroll t)
+(setopt mouse-wheel-progressive-speed nil)
 ;; OS specific
-(setq mouse-wheel-flip-direction nil)
+(setopt mouse-wheel-flip-direction nil)
 
-(setq hscroll-step 7)
-(setq hscroll-margin 3)
+(setopt hscroll-step 7)
+(setopt hscroll-margin 3)
 
 (add-hook 'dired-mode-hook #'dired-hide-details-mode)
-(setq dired-kill-when-opening-new-dired-buffer t)
-(setq dired-free-space nil)
+(setopt dired-kill-when-opening-new-dired-buffer t)
+(setopt dired-free-space nil)
 
 (use-package nerd-icons-dired
   :config
@@ -270,7 +269,7 @@
   :config
   (global-treesit-auto-mode)
   (treesit-auto-add-to-auto-mode-alist)
-  (setq treesit-font-lock-level 4))
+  (setopt treesit-font-lock-level 4))
 
 (setopt c-ts-mode-indent-offset 4)
 
@@ -317,7 +316,7 @@
 
 (use-package indent-bars
   :config
-  (setq
+  (setopt
    indent-bars-color '(highlight :face-bg t :blend 0.2)
    indent-bars-pattern "."
    indent-bars-width-frac 0.1
