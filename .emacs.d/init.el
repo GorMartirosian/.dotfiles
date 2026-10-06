@@ -58,8 +58,6 @@
 
 (delete-selection-mode 1)
 (global-auto-revert-mode 1)
-(repeat-mode 1)
-(winner-mode 1)
 
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 
