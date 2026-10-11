@@ -15,8 +15,7 @@
 (setopt inhibit-startup-screen t)
 
 (setopt initial-frame-alist
-	'((fullscreen . maximized)
-	  (undecorated . t)))
+	'((fullscreen . maximized)))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
