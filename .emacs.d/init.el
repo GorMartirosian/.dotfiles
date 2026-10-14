@@ -308,7 +308,18 @@
 
 (with-eval-after-load 'xref
   ;; (advice-add #'xref-find-definitions :after #'my/recenter)
-  (advice-add #'xref-go-back :after #'my/recenter))
+  (advice-add #'xref-go-back :after #'my/recenter)
+
+  (set-face-attribute 'xref-file-header nil
+		      :foreground "#b8b8b8"
+		      :background "#2f2f2f"
+		      :height 1.1
+		      :weight 'bold
+		      :extend t)
+
+  (add-hook 'xref--xref-buffer-mode-hook
+	    (lambda ()
+	      (face-remap-add-relative 'default :height 0.9))))
 
 (with-eval-after-load 'isearch
   (advice-add #'isearch-repeat-forward :after #'my/recenter))
