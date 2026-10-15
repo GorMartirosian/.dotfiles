@@ -161,9 +161,7 @@
   (keymap-global-set "M-s g" #'consult-ripgrep)
   (keymap-global-set "M-s l" #'consult-line)
   (setopt consult-ripgrep-args
-          (concat consult-ripgrep-args " --fixed-strings"))
-  (setopt xref-show-xrefs-function #'consult-xref
-	  xref-show-definitions-function #'consult-xref))
+          (concat consult-ripgrep-args " --fixed-strings")))
 
 (use-package embark
   :after vertico
