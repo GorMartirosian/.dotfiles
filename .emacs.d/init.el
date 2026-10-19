@@ -171,9 +171,10 @@
 
 (defun my/grep-hide-line ()
   (interactive)
-  (let ((inhibit-read-only t))
-    (kill-whole-line)
-    (delete-blank-lines)))
+  (when (eq buffer-undo-list t)
+    (setq buffer-undo-list nil))
+  (setq buffer-read-only nil)
+  (kill-whole-line))
 
 (with-eval-after-load 'grep
   (set-face-attribute 'grep-heading nil
@@ -314,6 +315,12 @@
 		      :height 1.1
 		      :weight 'bold
 		      :extend t)
+
+  (keymap-set xref--xref-buffer-mode-map "C-k" #'my/grep-hide-line)
+
+  (advice-add 'xref--revert-buffer :after
+	      (lambda (&rest _)
+		(setq buffer-undo-list nil)))
 
   (add-hook 'xref--xref-buffer-mode-hook
 	    (lambda ()
