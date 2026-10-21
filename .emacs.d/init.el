@@ -173,7 +173,7 @@
   (interactive)
   (when (eq buffer-undo-list t)
     (setq buffer-undo-list nil))
-  (setq buffer-read-only nil)
+  (setq-local inhibit-read-only t)
   (kill-whole-line))
 
 (with-eval-after-load 'grep
