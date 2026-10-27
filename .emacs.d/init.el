@@ -290,10 +290,6 @@
 		       json-ts-mode-hook))
     (add-hook mode-hook #'eglot-ensure)))
 
-(use-package apheleia
-  :config
-  (apheleia-global-mode +1))
-
 (use-package markdown-mode
   :mode "\\.md\\'")
 
